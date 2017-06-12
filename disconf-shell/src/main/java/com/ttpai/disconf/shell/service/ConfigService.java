@@ -3,6 +3,7 @@ package com.ttpai.disconf.shell.service;
 import com.ttpai.disconf.shell.dao.AppDAO;
 import com.ttpai.disconf.shell.dao.ConfigDAO;
 import com.ttpai.disconf.shell.dao.EnvDAO;
+import com.ttpai.disconf.shell.util.R;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,17 +31,17 @@ public class ConfigService {
      */
     public Map<String, String> selectConfigFileByAppAndEnv(String appName, String envName) {
         if (StringUtils.isBlank(appName) && StringUtils.isBlank(envName)) {
-            throw new RuntimeException("--app 和 --env 不能为空");
+            R.Serr.interrupt("--app 和 --env 不能为空");
         }
 
         Integer appId = appDAO.selectAppIdByName(appName);
         if (null == appId) {
-            throw new RuntimeException("App信息 “" + appName + "” 不存在");
+            R.Serr.interrupt("App信息 '" + appName + "' 不存在");
         }
 
         Integer envId = envDAO.selectEnvIdByName(envName);
         if (null == envId) {
-            throw new RuntimeException("Env信息 “" + envName + "” 不存在");
+            R.Serr.interrupt("Env信息 '" + envName + "' 不存在");
         }
 
         return configDAO.selectEnvIdByName(appId, envId); // 文件名和文件内容

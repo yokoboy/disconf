@@ -93,7 +93,7 @@
 
     <build>
 
-        <finalName>spring_boot_lbs</finalName>
+        <finalName>disconf-shell</finalName>
 
         <plugins>
 
@@ -105,12 +105,24 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Rose>*</Rose>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring.boot.version}</version>
                 <configuration>
                     <mainClass>com.ttpai.disconf.shell.DisconfShellApp</mainClass>
-                    <fork>true</fork>
                 </configuration>
                 <executions>
                     <execution>
