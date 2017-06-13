@@ -1,16 +1,5 @@
 package com.baidu.disconf.web.web.auth;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.baidu.disconf.web.service.sign.form.SigninForm;
 import com.baidu.disconf.web.service.sign.service.SignMgr;
 import com.baidu.disconf.web.service.user.bo.User;
@@ -27,6 +16,16 @@ import com.baidu.dsp.common.constant.WebConstants;
 import com.baidu.dsp.common.controller.BaseController;
 import com.baidu.dsp.common.vo.JsonObjectBase;
 import com.baidu.ub.common.commons.ThreadContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 /**
  * @author liaoqiqi
@@ -52,10 +51,6 @@ public class UserController extends BaseController {
 
     /**
      * GET 获取
-     *
-     * @param
-     *
-     * @return
      */
     @NoAuth
     @RequestMapping(value = "/session", method = RequestMethod.GET)
@@ -76,15 +71,10 @@ public class UserController extends BaseController {
 
     /**
      * 登录
-     *
-     * @param signin
-     * @param request
-     *
-     * @return
      */
     @NoAuth
-    @RequestMapping(value = "/signin", method = RequestMethod.POST)
     @ResponseBody
+    @RequestMapping(value = "/signin", method = RequestMethod.POST)
     public JsonObjectBase signin(@Valid SigninForm signin, HttpServletRequest request) {
 
         LOG.info(signin.toString());
@@ -111,10 +101,6 @@ public class UserController extends BaseController {
 
     /**
      * 登出
-     *
-     * @param request
-     *
-     * @return
      */
     @NoAuth
     @RequestMapping(value = "/signout", method = RequestMethod.GET)
@@ -128,10 +114,6 @@ public class UserController extends BaseController {
 
     /**
      * 修改密码
-     *
-     * @param
-     *
-     * @return
      */
     @RequestMapping(value = "/password", method = RequestMethod.PUT)
     @ResponseBody

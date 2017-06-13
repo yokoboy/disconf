@@ -88,8 +88,14 @@ $('#myfilerar').change(function (evt) {
     if (ret == true) {
         upload_status = 1;
         var myfilerar = $('input[name=myfilerar]')
-        var val = myfilerar.val();
-        errorrar.html("&nbsp;&nbsp;准备上传: " + val);
+        var files = myfilerar[0].files;
+        console.info(files)
+        console.info(files.item)
+        var errorInfo = files.length + " 个文件<br>";
+        for (var i = 0; i < files.length; i++) {
+            errorInfo += files[i].name + "<br>"
+        }
+        errorrar.html("&nbsp;&nbsp;准备上传: " + errorInfo);
     }
 });
 
@@ -145,7 +151,7 @@ var options = {
         }
         if (is_ok == true) {
             add_file_but.html("重新上传")
-            errorrar.html("&nbsp;&nbsp;上传成功！");
+            errorrar.html("<br>" + xhr.responseJSON.result);
             upload_status = 2;
         } else {
             upload_status = 3;

@@ -7,7 +7,6 @@ import java.util.List;
  * 页面返回结果
  *
  * @param <T>
- *
  * @author liaoqiqi
  * @version 2014-2-20
  */

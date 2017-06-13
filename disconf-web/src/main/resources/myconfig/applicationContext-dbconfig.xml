@@ -11,42 +11,22 @@
 
     <!-- onedb configure start -->
 
-    <bean id="onedbDataSource" abstract="true"
-          class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="driverClass">
-            <value>${jdbc.driverClassName}</value>
-        </property>
-        <property name="initialPoolSize">
-            <value>${jdbc.initialPoolSize}</value>
-        </property>
-        <property name="maxPoolSize">
-            <value>${jdbc.maxPoolSize}</value>
-        </property>
-        <property name="minPoolSize">
-            <value>${jdbc.minPoolSize}</value>
-        </property>
-        <property name="idleConnectionTestPeriod">
-            <value>${jdbc.idleConnectionTestPeriod}</value>
-        </property>
-        <property name="maxIdleTime">
-            <value>${jdbc.maxIdleTime}</value>
-        </property>
+    <bean id="onedbDataSource" abstract="true" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="${jdbc.driverClassName}"/>
+        <property name="initialPoolSize" value="${jdbc.initialPoolSize}"/>
+        <property name="maxPoolSize" value="${jdbc.maxPoolSize}"/>
+        <property name="minPoolSize" value="${jdbc.minPoolSize}"/>
+        <property name="idleConnectionTestPeriod" value="${jdbc.idleConnectionTestPeriod}"/>
+        <property name="maxIdleTime" value="${jdbc.maxIdleTime}"/>
     </bean>
 
     <bean id="onedb_0" parent="onedbDataSource">
-        <property name="jdbcUrl">
-            <value>${jdbc.db_0.url}</value>
-        </property>
-        <property name="user">
-            <value>${jdbc.db_0.username}</value>
-        </property>
-        <property name="password">
-            <value>${jdbc.db_0.password}</value>
-        </property>
+        <property name="jdbcUrl" value="${jdbc.db_0.url}"/>
+        <property name="user" value="${jdbc.db_0.username}"/>
+        <property name="password" value="${jdbc.db_0.password}"/>
     </bean>
 
-    <bean id="vdb_one"
-          class="com.baidu.ub.common.dbmanage.datasource.VirtualDataSource">
+    <bean id="vdb_one" class="com.baidu.ub.common.dbmanage.datasource.VirtualDataSource">
         <property name="masterSet">
             <list>
                 <value>onedb_0</value>
@@ -73,12 +53,12 @@
             <ref local="onedbShardingRule"/>
         </property>
     </bean>
-    <bean id="onedbShardingRule"
-          class="com.baidu.ub.common.dbmanage.rule.SimpleDBShardingRuleImpl">
+
+    <bean id="onedbShardingRule" class="com.baidu.ub.common.dbmanage.rule.SimpleDBShardingRuleImpl">
         <property name="shardingNum" value="1"/>
     </bean>
-    <bean id="onedbMultiDSKeyContext"
-          class="com.baidu.ub.common.dbmanage.datasource.MultiDataSourceKeyContext">
+    
+    <bean id="onedbMultiDSKeyContext" class="com.baidu.ub.common.dbmanage.datasource.MultiDataSourceKeyContext">
         <property name="router">
             <ref local="onedbRouter"/>
         </property>
@@ -90,10 +70,8 @@
     </bean>
     <!-- onedb configure end -->
 
-
     <!-- Transaction config -->
-    <bean id="onedbTransactionManager"
-          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <bean id="onedbTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="onedbMultiDataSource"/>
     </bean>
     <tx:annotation-driven transaction-manager="onedbTransactionManager"/>

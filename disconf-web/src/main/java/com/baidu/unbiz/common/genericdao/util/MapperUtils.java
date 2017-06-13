@@ -19,10 +19,7 @@ public class MapperUtils {
      *
      * @param rs
      * @param column
-     * @param paramClass
-     *
-     * @return
-     *
+     * @param typeClass
      * @throws SQLException
      */
     public static Object getValue4Type(ResultSet rs, String column, Class<?> typeClass) throws SQLException {
