@@ -1,15 +1,32 @@
 package com.baidu.ub.common.commons;
 
+import com.github.knightliao.apollo.db.bo.BaseObject;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.github.knightliao.apollo.db.bo.BaseObject;
 
 /**
  * 线程执行的上下文内容
  */
 public class ThreadContext {
+
+    private final static String SHARD_KEY = "shardKey";
+
+    /**
+     * 当前Session中登陆的user
+     */
+    private final static String VISITOR_KEY = "sessionVisitor";
+
+    /**
+     * 线程的日志级别
+     */
+    private final static String THREAD_LOG_KEY = "threadLog";
+
+    /**
+     * 会话ID
+     */
+    private final static String SESSION_KEY = "sessionId";
 
     /**
      * 线程上下文变量的持有者
@@ -22,9 +39,6 @@ public class ThreadContext {
 
     /**
      * 添加内容到线程上下文中
-     *
-     * @param key
-     * @param value
      */
     public final static void putContext(String key, Object value) {
         Map<String, Object> ctx = CTX_HOLDER.get();
@@ -36,8 +50,6 @@ public class ThreadContext {
 
     /**
      * 从线程上下文中获取内容
-     *
-     * @param key
      */
     @SuppressWarnings("unchecked")
     public final static <T extends Object> T getContext(String key) {
@@ -73,10 +85,6 @@ public class ThreadContext {
 
     /**
      * 上下文中是否包含此key
-     *
-     * @param key
-     *
-     * @return
      */
     public final static boolean contains(String key) {
         Map<String, Object> ctx = CTX_HOLDER.get();
@@ -165,20 +173,5 @@ public class ThreadContext {
         remove(SESSION_KEY);
     }
 
-    private final static String SHARD_KEY = "shardKey";
 
-    /**
-     * 当前Session中登陆的user
-     */
-    private final static String VISITOR_KEY = "sessionVisitor";
-
-    /**
-     * 线程的日志级别
-     */
-    private final static String THREAD_LOG_KEY = "threadLog";
-
-    /**
-     * 会话ID
-     */
-    private final static String SESSION_KEY = "sessionId";
 }

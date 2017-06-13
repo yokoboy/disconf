@@ -18,21 +18,13 @@ public class AuthMgrImpl implements AuthMgr {
     @Autowired
     private UserInnerMgr userInnerMgr;
 
+    /**
+     * 根据appId 判断是否有操作权限
+     */
     @Override
     public boolean verifyApp4CurrentUser(Long appId) {
-
         Set<Long> idsLongs = userInnerMgr.getVisitorAppIds();
-
-        if (CollectionUtils.isEmpty(idsLongs)) {
-            return true;
-        }
-
-        if (idsLongs.contains(appId)) {
-            return true;
-        } else {
-            return false;
-        }
-
+        return CollectionUtils.isEmpty(idsLongs) || idsLongs.contains(appId);
     }
 
 }

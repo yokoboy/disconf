@@ -30,9 +30,7 @@ public class ConfigFetchMgrImpl implements ConfigFetchMgr {
      * 根据详细参数获取配置
      */
     @Override
-    public Config getConfByParameter(Long appId, Long envId, String version, String key,
-                                     DisConfigTypeEnum disConfigTypeEnum) {
-
+    public Config getConfByParameter(Long appId, Long envId, String version, String key, DisConfigTypeEnum disConfigTypeEnum) {
         return configDao.getByParameter(appId, envId, version, key, disConfigTypeEnum);
     }
 

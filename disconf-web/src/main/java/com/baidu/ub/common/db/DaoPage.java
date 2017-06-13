@@ -1,9 +1,9 @@
 package com.baidu.ub.common.db;
 
+import com.baidu.unbiz.common.genericdao.operator.Order;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.baidu.unbiz.common.genericdao.operator.Order;
 
 /**
  * 专门 用于DAO的Page 外部模块不能使用

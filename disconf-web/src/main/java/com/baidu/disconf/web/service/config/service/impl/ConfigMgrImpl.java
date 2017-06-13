@@ -1,22 +1,5 @@
 package com.baidu.disconf.web.service.config.service.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.baidu.disconf.core.common.constants.DisConfigTypeEnum;
 import com.baidu.disconf.web.common.Constants;
 import com.baidu.disconf.web.config.ApplicationPropertyConfig;
@@ -47,6 +30,17 @@ import com.baidu.ub.common.db.DaoPageResult;
 import com.github.knightliao.apollo.utils.data.GsonUtils;
 import com.github.knightliao.apollo.utils.io.OsUtil;
 import com.github.knightliao.apollo.utils.time.DateUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author liaoqiqi
@@ -105,7 +99,6 @@ public class ConfigMgrImpl implements ConfigMgr {
      * 配置文件的整合
      *
      * @param confListForm
-     *
      * @return
      */
     public List<File> getDisconfFileList(ConfListForm confListForm) {
@@ -325,9 +318,7 @@ public class ConfigMgrImpl implements ConfigMgr {
      */
     @Override
     public void newConfig(ConfNewItemForm confNewForm, DisConfigTypeEnum disConfigTypeEnum) {
-
         Config config = new Config();
-
         config.setAppId(confNewForm.getAppId());
         config.setEnvId(confNewForm.getEnvId());
         config.setName(confNewForm.getKey());
@@ -345,11 +336,9 @@ public class ConfigMgrImpl implements ConfigMgr {
         configHistoryMgr.createOne(config.getId(), "", config.getValue());
 
         // 发送邮件通知
-        //
         String toEmails = appMgr.getEmails(config.getAppId());
-        if (applicationPropertyConfig.isEmailMonitorOn() == true) {
-            logMailBean.sendHtmlEmail(toEmails, " config new", getNewValue(confNewForm.getValue(), config.toString(),
-                    getConfigUrlHtml(config)));
+        if (applicationPropertyConfig.isEmailMonitorOn()) {
+            logMailBean.sendHtmlEmail(toEmails, " config new", getNewValue(confNewForm.getValue(), config.toString(), getConfigUrlHtml(config)));
         }
     }
 
@@ -383,7 +372,6 @@ public class ConfigMgrImpl implements ConfigMgr {
      *
      * @param newValue
      * @param identify
-     *
      * @return
      */
     private String getNewValue(String newValue, String identify, String htmlClick) {
@@ -463,7 +451,6 @@ public class ConfigMgrImpl implements ConfigMgr {
      * 转换成配置返回
      *
      * @param config
-     *
      * @return
      */
     private ConfListVo convert(Config config, String appNameString, String envName, ZkDisconfData zkDisconfData) {

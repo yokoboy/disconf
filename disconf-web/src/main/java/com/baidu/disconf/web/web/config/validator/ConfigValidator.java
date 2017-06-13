@@ -43,7 +43,6 @@ public class ConfigValidator {
      * 校验
      *
      * @param id
-     *
      * @return
      */
     public Config valideConfigExist(Long id) {
@@ -144,9 +143,8 @@ public class ConfigValidator {
      * @param appId
      */
     private void validateAppAuth(long appId) {
-
-        boolean ret = authMgr.verifyApp4CurrentUser(appId);
-        if (ret == false) {
+        boolean canOpt = authMgr.verifyApp4CurrentUser(appId);
+        if (!canOpt) {
             throw new FieldException(ConfNewForm.APPID, "app.auth.noright", null);
         }
 
@@ -154,12 +152,8 @@ public class ConfigValidator {
 
     /**
      * 校验新建 配置
-     *
-     * @param confNewForm
-     * @param disConfigTypeEnum
      */
     public void validateNew(ConfNewItemForm confNewForm, DisConfigTypeEnum disConfigTypeEnum) {
-
         //
         // app
         //
@@ -167,10 +161,8 @@ public class ConfigValidator {
         if (app == null) {
             throw new FieldException(ConfNewForm.APPID, "app.not.exist", null);
         }
-
-        //
+        // 权限判断
         validateAppAuth(app.getId());
-
         //
         // env
         //
@@ -182,8 +174,7 @@ public class ConfigValidator {
         //
         // key
         //
-        Config config = configFetchMgr.getConfByParameter(app.getId(), env.getId(), confNewForm.getVersion(),
-                confNewForm.getKey(), disConfigTypeEnum);
+        Config config = configFetchMgr.getConfByParameter(app.getId(), env.getId(), confNewForm.getVersion(), confNewForm.getKey(), disConfigTypeEnum);
         if (config != null) {
             throw new FieldException(ConfNewItemForm.KEY, "key.exist", null);
         }
