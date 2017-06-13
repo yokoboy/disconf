@@ -11,6 +11,7 @@
     <modules>
         <module>disconf-client</module>
         <module>disconf-core</module>
+        <module>disconf-web</module>
     </modules>
 
     <inceptionYear>2015</inceptionYear>
@@ -648,6 +649,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
+                    <skip>true</skip>
                     <argLine>-Dfile.encoding=UTF-8</argLine>
                     <includes>
                         <include>**/*TestCase.java</include>
@@ -677,11 +679,17 @@
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
                 <version>3.1.0</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
