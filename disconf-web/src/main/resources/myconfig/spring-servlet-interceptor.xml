@@ -9,8 +9,7 @@
 
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
-            <bean class="com.baidu.dsp.common.interceptor.session.SessionInterceptor">
-            </bean>
+            <bean class="com.baidu.dsp.common.interceptor.session.SessionInterceptor"/>
         </mvc:interceptor>
 
         <mvc:interceptor>
@@ -37,6 +36,7 @@
                 </property>
             </bean>
         </mvc:interceptor>
+
 
     </mvc:interceptors>
 

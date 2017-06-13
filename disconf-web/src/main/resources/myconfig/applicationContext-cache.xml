@@ -27,51 +27,27 @@
     </bean>
 
     <bean id="redisClientConfig1" class="com.github.knightliao.apollo.redis.config.RedisHAClientConfig">
-        <property name="cacheName">
-            <value>${redis.group1.client1.name}</value>
-        </property>
-        <property name="redisServerHost">
-            <value>${redis.group1.client1.host}</value>
-        </property>
-        <property name="redisServerPort">
-            <value>${redis.group1.client1.port}</value>
-        </property>
-        <property name="timeout">
-            <value>${redis.group1.client1.timeout}</value>
-        </property>
-        <property name="redisAuthKey">
-            <value>${redis.group1.client1.password}</value>
-        </property>
+        <property name="cacheName" value="${redis.group1.client1.name}"/>
+        <property name="redisServerHost" value="${redis.group1.client1.host}"/>
+        <property name="redisServerPort" value="${redis.group1.client1.port}"/>
+        <property name="timeout" value="${redis.group1.client1.timeout}"/>
+        <property name="redisAuthKey" value="${redis.group1.client1.password}"/>
     </bean>
 
     <bean id="redisClientDsp1" class="com.github.knightliao.apollo.redis.RedisClient">
-        <constructor-arg>
-            <ref bean="redisClientConfig1"/>
-        </constructor-arg>
+        <constructor-arg ref="redisClientConfig1"/>
     </bean>
 
     <bean id="redisClientConfig2" class="com.github.knightliao.apollo.redis.config.RedisHAClientConfig">
-        <property name="cacheName">
-            <value>${redis.group1.client2.name}</value>
-        </property>
-        <property name="redisServerHost">
-            <value>${redis.group1.client2.host}</value>
-        </property>
-        <property name="redisServerPort">
-            <value>${redis.group1.client2.port}</value>
-        </property>
-        <property name="timeout">
-            <value>${redis.group1.client2.timeout}</value>
-        </property>
-        <property name="redisAuthKey">
-            <value>${redis.group1.client2.password}</value>
-        </property>
+        <property name="cacheName" value="${redis.group1.client2.name}"/>
+        <property name="redisServerHost" value="${redis.group1.client2.host}"/>
+        <property name="redisServerPort" value="${redis.group1.client2.port}"/>
+        <property name="timeout" value="${redis.group1.client2.timeout}"/>
+        <property name="redisAuthKey" value="${redis.group1.client2.password}"/>
     </bean>
 
     <bean id="redisClientDsp2" class="com.github.knightliao.apollo.redis.RedisClient">
-        <constructor-arg>
-            <ref bean="redisClientConfig2"/>
-        </constructor-arg>
+        <constructor-arg ref="redisClientConfig2"/>
     </bean>
 
 </beans>
