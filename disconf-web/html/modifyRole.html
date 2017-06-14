@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html class="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <title>Disconf - 分布式配置管理平台</title>
+
+    <link rel="stylesheet" href="dep/bootstrap/css/bootstrap.css"/>
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" href="dep/bootstrap/css/bootstrap-ie6.css"/>
+    <![endif]-->
+    <!--[if lte IE 7]>
+    <link rel="stylesheet" href="dep/bootstrap/css/ie.css"/>
+    <![endif]-->
+    <![if !IE]>
+    <link rel="stylesheet" href="dep/bootstrap/css/noie.css"/>
+    <![endif]>
+    <link rel="stylesheet" href="dep/jquery-ui-1.10.4.custom/css/ui-lightness/jquery-ui-1.10.4.custom.css"/>
+    <link rel="stylesheet" href="assets/css/zTreeStyle/zTreeStyle.css" type="text/css">
+    <link rel="stylesheet" type="text/css" href="assets/css/project.css"/>
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top clearfix">
+    <div class="navbar-inner zu-top">
+        <div class="container">
+            <button type="button" class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <div class="nav-collapse collapse">
+
+                <a id="brand_url" href="/main.html" class="brand" style="margin-left:0px;padding:8px;"> <span class="zu-top-nav-link">Disconf</span> </a>
+
+                <ul class="nav pull-right">
+
+                    <div class="login-yes" style="display:none;padding:10px;">
+                        <li style="display:inline;">
+                            <a href="#">
+                                <span class="zu-top-nav-link loginName" id="username"></span>
+                            </a>
+                        </li>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <li style="display:inline;" class="dropdown">
+                            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
+                                <span class="zu-top-nav-link">新建<b class="caret"></b></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/newapp.html">新建APP</a></li>
+                                <li><a href="/newconfig_item.html">新建配置项</a></li>
+                                <li><a href="/newconfig_file.html">新建配置文件</a></li>
+                            </ul>
+                        </li>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <li style="display:inline;">
+                            <a href="/modifypassword.html">
+                                <span class="zu-top-nav-link">修改密码</span>
+                            </a>
+                        </li>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <li style="display:inline;">
+                            <a href="#" id="signout">
+                                <span class="zu-top-nav-link">退出</span>
+                            </a>
+                        </li>
+                    </div>
+
+                    <div class="login-no" style="padding:10px;">
+                        <li style="display:inline;">
+                            <a href="/login.html"><span class="zu-top-nav-link">登录</span></a>
+                        </li>
+                    </div>
+
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div id="Wrapper" class="clearfix">
+    <div id="Main" style="margin-top:50px;">
+        <div class="container-fluid">
+
+            <div class="row-fluid">
+
+                <div class="span4">
+                    <div class="well sidebar-nav" style="padding:10px;background-color:#fff">
+                        <h3 class="text-center">角色</h3>
+                        <br>
+                        <br>
+                        <ul id="roleSidebar" class="nav nav-list">
+                            <li>asd</li>
+                        </ul>
+                    </div>
+                    <!--/.well -->
+                </div>
+
+                <div class="span8">
+                    <div class="content" style="padding-bottom:15px;">
+
+                        <form id="form" action="/config/" method="post" class="private-form clearfix">
+                            <h2 class="autoPush-detail-title">修改权限</h2>
+
+                            <div id="authInfo" class="ztree">
+
+                            </div>
+
+                        </form>
+
+                        <div>
+                            <button id="file_submit" class="private-submit">保存</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="footer">
+    <div id="BottomMain">
+        <div class="text-center">
+            <p>分布式配置管理平台</p>
+            <p>Power by 技术部</p>
+        </div>
+    </div>
+</div>
+
+<script src="assets/js/jquery-1.11.0.js"></script>
+<script src="dep/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.js"></script>
+<script src="dep/bootstrap/js/bootstrap.js"></script>
+<script src="assets/js/util.js"></script>
+<script src="assets/js/common.js"></script>
+
+<script src="assets/js/jquery.form.js"></script>
+
+<script src="assets/js/jquery.ztree.all.js"></script>
+<script src="assets/js/footer.js"></script>
+
+<style type="text/css">
+    .roleItem {
+        margin: 10px;
+    }
+</style>
+
+<script type="application/javascript">
+
+    function roleItemClassClick(roleId) {
+        alert(roleId)
+    }
+
+
+    $(function () {
+        getSession();
+
+        $("#roleSidebar");
+
+        // 索取所有角色
+        $.getJSON("/api/auth_mng/role/list", function (data, status) {
+            console.info(data);
+
+            var liHtml = "";
+            $.each(data.result.allRoles, function (index, item) {
+                console.info(item);
+                liHtml += "<li class='roleItem' data-id='" + item.id + "'><a href='###'>" + item.roleName + "</a></li>"
+            });
+            $("#roleSidebar").html(liHtml)
+
+            $(".roleItem").on("click", function () {
+                var dataId = $(this).attr("data-id");
+                roleItemClassClick(dataId)
+            })
+        });
+
+
+        var authInfo;
+        // zTree 的参数配置，深入使用请参考 API 文档（setting 配置详解）
+        var setting = {
+            check: {
+                enable: true
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            }
+        };
+
+
+        // zTree 的数据属性，深入使用请参考 API 文档（zTreeNode 节点数据详解）
+        var zNodes = [
+            {id: 1, pId: 0, name: "随意勾选 1"},
+            {id: 11, pId: 1, name: "随意勾选 1-1"},
+            {id: 111, pId: 11, name: "随意勾选 1-1-1"},
+            {id: 112, pId: 11, name: "随意勾选 1-1-2"},
+            {id: 12, pId: 1, name: "随意勾选 1-2"},
+            {id: 121, pId: 12, name: "随意勾选 1-2-1"},
+            {id: 122, pId: 12, name: "随意勾选 1-2-2"},
+            {id: 2, pId: 0, name: "随意勾选 2", checked: true},
+            {id: 21, pId: 2, name: "随意勾选 2-1"},
+            {id: 22, pId: 2, name: "随意勾选 2-2"},
+            {id: 221, pId: 22, name: "随意勾选 2-2-1", checked: true},
+            {id: 222, pId: 22, name: "随意勾选 2-2-2"},
+            {id: 23, pId: 2, name: "随意勾选 2-3"}
+        ];
+        authInfo = $.fn.zTree.init($("#authInfo"), setting, zNodes);
+
+    })
+</script>
+
+</body>
+</html>
+

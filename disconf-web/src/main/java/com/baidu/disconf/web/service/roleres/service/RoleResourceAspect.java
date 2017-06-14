@@ -42,7 +42,7 @@ public class RoleResourceAspect {
      * @param pjp            方法
      * @param requestMapping 方法上的annotation
      */
-    @Around("anyPublicMethod() && @annotation(requestMapping) && !@annotation(com.baidu.dsp.common.annotation.NoAuth)")
+//    @Around("anyPublicMethod() && @annotation(requestMapping) && !@annotation(com.baidu.dsp.common.annotation.NoAuth)")
     public Object decideAccess(ProceedingJoinPoint pjp, RequestMapping requestMapping) throws Throwable {
 
         // 获取method上的url，若未标注value则默认为空字符串

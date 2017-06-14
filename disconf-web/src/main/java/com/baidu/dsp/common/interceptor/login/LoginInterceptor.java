@@ -56,6 +56,11 @@ public class LoginInterceptor extends WebCommonInterceptor {
 //                return false;
 //            }
 //        }
+        //
+        // 判断session中是否有visitor
+        //
+        HttpSession session = request.getSession();
+        Visitor visitor = (Visitor) session.getAttribute(UserConstant.USER_KEY);
 
         //
         // 去掉不需拦截的path
@@ -66,10 +71,11 @@ public class LoginInterceptor extends WebCommonInterceptor {
         LOG.info(request.getRequestURI());
 
         if (notInterceptPathList != null) {
-
             // 更精确的定位
             for (String path : notInterceptPathList) {
                 if (requestPath.contains(path)) {
+                    // 每次都更新session中的登录信息
+                    redisLogin.updateSessionVisitor(session, visitor);
                     return true;
                 }
             }
@@ -79,12 +85,6 @@ public class LoginInterceptor extends WebCommonInterceptor {
          * 种植Cookie
          */
         plantCookie(request, response);
-
-        //
-        // 判断session中是否有visitor
-        //
-        HttpSession session = request.getSession();
-        Visitor visitor = (Visitor) session.getAttribute(UserConstant.USER_KEY);
 
         //
         // session中没有该信息,则从 redis上获取，并更新session的数据

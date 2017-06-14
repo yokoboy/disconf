@@ -1,4 +1,4 @@
-package com.baidu.disconf.web.web.auth;
+package com.baidu.disconf.web.web.auth.controller;
 
 import com.baidu.disconf.web.service.sign.form.SigninForm;
 import com.baidu.disconf.web.service.sign.service.SignMgr;
