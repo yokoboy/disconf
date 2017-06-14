@@ -11,7 +11,6 @@ import com.github.knightliao.apollo.utils.web.CookieUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +19,7 @@ import java.util.List;
 
 /**
  * 所有请求（一个Session可能会有多个请求）均会通过此拦截器
+ * 只是用来判断Session中保存的用户信息是否存在
  *
  * @author liaoqiqi
  * @version 2013-11-28
@@ -38,6 +38,7 @@ public class LoginInterceptor extends WebCommonInterceptor {
     // Cookie域
     private String XONE_COOKIE_DOMAIN_STRING = "127.0.0.1";
 
+
     /**
      * 采用两级缓存。先访问session,<br/>
      * 如果存在，则直接使用，并更新 threadlocal <br/>
@@ -46,8 +47,15 @@ public class LoginInterceptor extends WebCommonInterceptor {
      * 如果redis也不存在，则认为没有登录
      */
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+//        if (handler instanceof HandlerMethod) {
+//            HandlerMethod handlerMethod = (HandlerMethod) handler;
+//            NoAuth noAuth = handlerMethod.getMethod().getAnnotation(NoAuth.class);
+//            if (null == noAuth) {
+//                return false;
+//            }
+//        }
 
         //
         // 去掉不需拦截的path
@@ -72,10 +80,6 @@ public class LoginInterceptor extends WebCommonInterceptor {
          */
         plantCookie(request, response);
 
-        /**
-         * 登录与否判断
-         */
-
         //
         // 判断session中是否有visitor
         //
@@ -86,37 +90,26 @@ public class LoginInterceptor extends WebCommonInterceptor {
         // session中没有该信息,则从 redis上获取，并更新session的数据
         //
         if (visitor == null) {
-
             Visitor redisVisitor = redisLogin.isLogin(request);
-
             //
             // 有登录信息
             //
-            if (redisVisitor != null) {
-
-                // 更新session中的登录信息
-                redisLogin.updateSessionVisitor(session, redisVisitor);
-
-            } else {
-
+            if (redisVisitor == null) {
                 // 还是没有登录
                 returnJsonSystemError(request, response, "login.error", ErrorCode.LOGIN_ERROR);
                 return false;
             }
-        } else {
-
-            // 每次都更新session中的登录信息
-            redisLogin.updateSessionVisitor(session, visitor);
         }
+
+
+        // 每次都更新session中的登录信息
+        redisLogin.updateSessionVisitor(session, visitor);
 
         return true;
     }
 
     /**
      * 种植Cookie
-     *
-     * @param request
-     * @param response
      */
     private void plantCookie(HttpServletRequest request, HttpServletResponse response) {
 
@@ -124,13 +117,8 @@ public class LoginInterceptor extends WebCommonInterceptor {
 
         // 没有Cookie 则生成一个随机的Cookie
         if (xId == null) {
-
             String cookieString = TokenUtil.generateToken();
-
-            CookieUtils
-                    .setCookie(response, LoginConstant.XONE_COOKIE_NAME_STRING, cookieString, XONE_COOKIE_DOMAIN_STRING,
-                            LoginConstant.XONE_COOKIE_AGE);
-        } else {
+            CookieUtils.setCookie(response, LoginConstant.XONE_COOKIE_NAME_STRING, cookieString, XONE_COOKIE_DOMAIN_STRING, LoginConstant.XONE_COOKIE_AGE);
         }
     }
 

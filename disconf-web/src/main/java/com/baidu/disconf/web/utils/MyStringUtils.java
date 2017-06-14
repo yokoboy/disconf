@@ -45,4 +45,11 @@ public class MyStringUtils {
         String charsetName = bom == null ? DEFAULT_ENCODING : bom.getCharsetName();
         return inputStreamToString(bomInputStream, charsetName);
     }
+
+    public static String clearPassword(String pwd) {
+        if (null == pwd) {
+            return null;
+        }
+        return pwd.replaceAll("(password.*?=)(.+?)\n", "$1****\n");
+    }
 }

@@ -1,19 +1,5 @@
 package com.baidu.disconf.web.web.config.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.baidu.disconf.core.common.constants.DisConfigTypeEnum;
 import com.baidu.disconf.core.common.json.ValueVo;
 import com.baidu.disconf.web.service.config.bo.Config;
@@ -28,6 +14,19 @@ import com.baidu.dsp.common.constant.WebConstants;
 import com.baidu.dsp.common.controller.BaseController;
 import com.baidu.dsp.common.exception.DocumentNotFoundException;
 import com.baidu.dsp.common.vo.JsonObjectBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.List;
 
 /**
  * 配置获取Controller, Disconf-client专门使用的
@@ -54,7 +53,6 @@ public class ConfigFetcherController extends BaseController {
      * 获取指定app env version 的配置项列表
      *
      * @param confForm
-     *
      * @return
      */
     @NoAuth
@@ -75,7 +73,6 @@ public class ConfigFetcherController extends BaseController {
      * 获取配置项 Item
      *
      * @param confForm
-     *
      * @return
      */
     @NoAuth
@@ -153,7 +150,6 @@ public class ConfigFetcherController extends BaseController {
      * 下载
      *
      * @param fileName
-     *
      * @return
      */
     public HttpEntity<byte[]> downloadDspBill(String fileName, String value) {
@@ -181,10 +177,7 @@ public class ConfigFetcherController extends BaseController {
         // 校验
         //
         ConfigFullModel configModel = configValidator4Fetch.verifyConfForm(confForm, true);
-
-        List<Config> configs =
-                configFetchMgr.getConfListByParameter(configModel.getApp().getId(), configModel.getEnv().getId(),
-                        configModel.getVersion(), hasValue);
+        List<Config> configs = configFetchMgr.getConfListByParameter(configModel.getApp().getId(), configModel.getEnv().getId(), configModel.getVersion(), hasValue);
 
         return buildListSuccess(configs, configs.size());
     }

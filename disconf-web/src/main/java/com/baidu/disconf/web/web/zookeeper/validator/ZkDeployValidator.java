@@ -1,9 +1,5 @@
 package com.baidu.disconf.web.web.zookeeper.validator;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.baidu.disconf.web.service.app.bo.App;
 import com.baidu.disconf.web.service.app.service.AppMgr;
 import com.baidu.disconf.web.service.env.bo.Env;
@@ -11,6 +7,9 @@ import com.baidu.disconf.web.service.env.service.EnvMgr;
 import com.baidu.disconf.web.service.zookeeper.form.ZkDeployForm;
 import com.baidu.disconf.web.web.config.dto.ConfigFullModel;
 import com.baidu.dsp.common.exception.FieldException;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author liaoqiqi
@@ -21,15 +20,10 @@ public class ZkDeployValidator {
 
     @Autowired
     private AppMgr appMgr;
-
     @Autowired
     private EnvMgr envMgr;
 
-    /**
-     * @param zkDeployForm
-     *
-     * @return
-     */
+
     public ConfigFullModel verify(ZkDeployForm zkDeployForm) {
 
         //

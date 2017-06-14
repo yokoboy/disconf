@@ -1,15 +1,5 @@
 package com.baidu.disconf.web.web.zookeeper.controller;
 
-import javax.validation.Valid;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.baidu.disconf.core.common.constants.Constants;
 import com.baidu.disconf.core.common.json.ValueVo;
 import com.baidu.disconf.web.service.zookeeper.config.ZooConfig;
@@ -21,6 +11,15 @@ import com.baidu.dsp.common.annotation.NoAuth;
 import com.baidu.dsp.common.constant.WebConstants;
 import com.baidu.dsp.common.controller.BaseController;
 import com.baidu.dsp.common.vo.JsonObjectBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.validation.Valid;
 
 /**
  * Zoo API
@@ -36,21 +35,17 @@ public class ZooController extends BaseController {
 
     @Autowired
     private ZooConfig zooConfig;
-
     @Autowired
     private ZkDeployValidator zkDeployValidator;
-
     @Autowired
     private ZkDeployMgr zkDeployMgr;
 
     /**
      * 获取Zookeeper地址
-     *
-     * @return
      */
     @NoAuth
-    @RequestMapping(value = "/hosts", method = RequestMethod.GET)
     @ResponseBody
+    @RequestMapping(value = "/hosts", method = RequestMethod.GET)
     public ValueVo getHosts() {
 
         ValueVo confItemVo = new ValueVo();
@@ -62,12 +57,10 @@ public class ZooController extends BaseController {
 
     /**
      * 获取ZK prefix
-     *
-     * @return
      */
     @NoAuth
-    @RequestMapping(value = "/prefix", method = RequestMethod.GET)
     @ResponseBody
+    @RequestMapping(value = "/prefix", method = RequestMethod.GET)
     public ValueVo getPrefixUrl() {
 
         ValueVo confItemVo = new ValueVo();
@@ -79,21 +72,15 @@ public class ZooController extends BaseController {
 
     /**
      * 获取ZK 部署情况
-     *
-     * @param zkDeployForm
-     *
-     * @return
      */
-    @RequestMapping(value = "/zkdeploy", method = RequestMethod.GET)
     @ResponseBody
+    @RequestMapping(value = "/zkdeploy", method = RequestMethod.GET)
     public JsonObjectBase getZkDeployInfo(@Valid ZkDeployForm zkDeployForm) {
 
         LOG.info(zkDeployForm.toString());
 
         ConfigFullModel configFullModel = zkDeployValidator.verify(zkDeployForm);
-
-        String data = zkDeployMgr.getDeployInfo(configFullModel.getApp().getName(), configFullModel.getEnv().getName(),
-                zkDeployForm.getVersion());
+        String data = zkDeployMgr.getDeployInfo(configFullModel.getApp().getName(), configFullModel.getEnv().getName(), zkDeployForm.getVersion());
 
         return buildSuccess("hostInfo", data);
     }

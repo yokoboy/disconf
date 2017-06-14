@@ -135,16 +135,12 @@ public class ConfigMgrImpl implements ConfigMgr {
      * 配置列表
      */
     @Override
-    public DaoPageResult<ConfListVo> getConfigList(ConfListForm confListForm, boolean fetchZk,
-                                                   final boolean getErrorMessage) {
+    public DaoPageResult<ConfListVo> getConfigList(ConfListForm confListForm, boolean fetchZk, final boolean getErrorMessage) {
 
         //
         // 数据据结果
         //
-        DaoPageResult<Config> configList = configDao.getConfigList(confListForm.getAppId(), confListForm.getEnvId(),
-                confListForm.getVersion(),
-                confListForm.getPage());
-
+        DaoPageResult<Config> configList = configDao.getConfigList(confListForm.getAppId(), confListForm.getEnvId(), confListForm.getVersion(), confListForm.getPage());
         //
         //
         //
@@ -185,6 +181,9 @@ public class ConfigMgrImpl implements ConfigMgr {
                             // 列表 value 设置为 ""
                             configListVo.setValue("");
                             configListVo.setMachineList(new ArrayList<ZkDisconfData.ZkDisconfDataItem>());
+                        }
+                        if (null != configListVo && configListVo.getKey().endsWith(".properties")) {
+                            configListVo.setValue(MyStringUtils.clearPassword(configListVo.getValue()));
                         }
 
                         return configListVo;

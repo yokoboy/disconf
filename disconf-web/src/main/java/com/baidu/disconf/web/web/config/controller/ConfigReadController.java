@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.baidu.disconf.web.utils.MyStringUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +75,6 @@ public class ConfigReadController extends BaseController {
      * 获取列表,有分页的
      *
      * @param confListForm
-     *
      * @return
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
@@ -96,7 +96,6 @@ public class ConfigReadController extends BaseController {
      * 获取列表,有分页的, 没有ZK信息
      *
      * @param confListForm
-     *
      * @return
      */
     @RequestMapping(value = "/simple/list", method = RequestMethod.GET)
@@ -118,7 +117,6 @@ public class ConfigReadController extends BaseController {
      * 获取某个
      *
      * @param configId
-     *
      * @return
      */
     @RequestMapping(value = "/{configId}", method = RequestMethod.GET)
@@ -130,6 +128,10 @@ public class ConfigReadController extends BaseController {
 
         ConfListVo config = configMgr.getConfVo(configId);
 
+        if (null != config && config.getKey().endsWith(".properties")) {
+            config.setValue(MyStringUtils.clearPassword(config.getValue()));
+        }
+
         return buildSuccess(config);
     }
 
@@ -137,7 +139,6 @@ public class ConfigReadController extends BaseController {
      * 获取 zk
      *
      * @param configId
-     *
      * @return
      */
     @RequestMapping(value = "/zk/{configId}", method = RequestMethod.GET)
@@ -156,7 +157,6 @@ public class ConfigReadController extends BaseController {
      * 下载
      *
      * @param configId
-     *
      * @return
      */
     @RequestMapping(value = "/download/{configId}", method = RequestMethod.GET)
@@ -190,7 +190,6 @@ public class ConfigReadController extends BaseController {
      * 批量下载配置文件
      *
      * @param confListForm
-     *
      * @return
      */
     @RequestMapping(value = "/downloadfilebatch", method = RequestMethod.GET)

@@ -36,18 +36,9 @@ public class RedisLoginImpl implements RedisLogin {
     public Visitor isLogin(HttpServletRequest request) {
         String xId = CookieUtils.getCookieValue(request, LoginConstant.XONE_COOKIE_NAME_STRING);
         if (xId != null) {
-            Visitor visitor = (Visitor) redisCacheMgr.get(this.getRedisKey(xId));
-            //
-            // 登录了
-            //
-            if (visitor != null) {
-                return visitor;
-            } else {
-                return null;
-            }
-        } else {
-            return null;
+            return (Visitor) redisCacheMgr.get(this.getRedisKey(xId));
         }
+        return null;
     }
 
     /**

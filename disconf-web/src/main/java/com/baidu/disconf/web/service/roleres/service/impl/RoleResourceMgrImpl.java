@@ -1,10 +1,11 @@
 package com.baidu.disconf.web.service.roleres.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.baidu.disconf.web.service.roleres.bo.RoleResource;
+import com.baidu.disconf.web.service.roleres.constant.RoleResourceConstant;
+import com.baidu.disconf.web.service.roleres.dao.RoleResourceDao;
+import com.baidu.disconf.web.service.roleres.service.RoleResourceMgr;
+import com.baidu.disconf.web.service.user.dto.Visitor;
+import com.baidu.ub.common.commons.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +14,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.baidu.disconf.web.service.roleres.bo.RoleResource;
-import com.baidu.disconf.web.service.roleres.constant.RoleResourceConstant;
-import com.baidu.disconf.web.service.roleres.dao.RoleResourceDao;
-import com.baidu.disconf.web.service.roleres.service.RoleResourceMgr;
-import com.baidu.disconf.web.service.user.dto.Visitor;
-import com.baidu.ub.common.commons.ThreadContext;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -44,10 +43,9 @@ public class RoleResourceMgrImpl implements RoleResourceMgr {
      * @return
      */
     @Override
-    @Cacheable(value = "${role_res_cache_name}")
+//    @Cacheable(value = "${role_res_cache_name}")
     public Map<String, Map<RequestMethod, List<Integer>>> getAllAsMap() {
-        Map<String, Map<RequestMethod, List<Integer>>> infoMap =
-                new HashMap<String, Map<RequestMethod, List<Integer>>>();
+        Map<String, Map<RequestMethod, List<Integer>>> infoMap = new HashMap<String, Map<RequestMethod, List<Integer>>>();
 
         LOG.info("Querying role_resource table to get all...");
         List<RoleResource> roleResList = roleResDao.findAll();
@@ -72,10 +70,6 @@ public class RoleResourceMgrImpl implements RoleResourceMgr {
 
     /**
      * 把roleRes的信息加到对应的<method, List<roleId>>
-     *
-     * @param methodMap
-     * @param roleId
-     * @param methodMask
      */
     private void updateMethodMap(Map<RequestMethod, List<Integer>> methodMap, Integer roleId, String methodMask) {
         for (int i = 0; i < RoleResourceConstant.METHOD_NUM; ++i) {
@@ -93,12 +87,6 @@ public class RoleResourceMgrImpl implements RoleResourceMgr {
         }
     }
 
-    /**
-     * @param pattern
-     * @param method
-     *
-     * @return
-     */
     @Override
     public boolean checkUserPermission(String pattern, RequestMethod method) {
         // 获取用户角色

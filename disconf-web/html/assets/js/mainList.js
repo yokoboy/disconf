@@ -20,17 +20,19 @@
                 var result = data.page.result;
                 $
                     .each(
-                    result,
-                    function (index, item) {
-                        html += '<li role="presentation" role="menuitem" tabindex="-1"><a rel='
-                            + item.id
-                            + ' href="#">APP: '
-                            + item.name
-                            + '</a></li>';
-                    });
+                        result,
+                        function (index, item) {
+                            html += '<li role="presentation" role="menuitem" tabindex="-1"><a rel='
+                                + item.id
+                                + ' href="#">APP: '
+                                + item.name
+                                + '</a></li>';
+                        });
                 $("#applist").html(html);
             }
         });
+
+
     $("#applist").on('click', 'li a', function (e) {
         appId = $(this).attr('rel');
         $("#app_info").html(", " + $(this).text());
@@ -96,6 +98,8 @@
                 $("#envChoice").html(html);
             }
         });
+
+
     $("#envChoice").on('click', 'li a', function () {
         envId = $(this).attr('rel');
         $("#env_info").html($(this).text());
@@ -126,10 +130,7 @@
 
         $("#zk_deploy").show().children().show();
 
-        $("#batch_download").attr(
-            'href',
-                "/api/web/config/downloadfilebatch?appId=" + appId + "&envId="
-                + envId + "&version=" + version);
+        $("#batch_download").attr('href', "/api/web/config/downloadfilebatch?appId=" + appId + "&envId=" + envId + "&version=" + version);
 
         $("#mainlist_error").hide();
         var parameter = ""
@@ -150,10 +151,7 @@
             }
         }
 
-        $.ajax({
-            type: "GET",
-            url: url
-        }).done(function (data) {
+        $.ajax({type: "GET", url: url}).done(function (data) {
             if (data.success === "true") {
                 var html = "";
                 var result = data.page.result;
@@ -182,29 +180,20 @@
         function renderItem(item, i) {
 
             var link = "";
-            del_link = '<a id="itemDel'
-                + item.configId
-                + '" style="cursor: pointer; cursor: hand; " ><i title="删除" class="icon-remove"></i></a>';
+            del_link = '<a id="itemDel' + item.configId + '" style="cursor: pointer; cursor: hand; " ><i title="删除" class="icon-remove"></i></a>';
             if (item.type == "配置文件") {
-                link = '<a target="_blank" href="modifyFile.html?configId='
-                    + item.configId
-                    + '"><i title="修改" class="icon-edit"></i></a>';
+                link = '<a target="_blank" href="modifyFile.html?configId=' + item.configId + '"><i title="修改" class="icon-edit"></i></a>';
             } else {
-                link = '<a target="_blank" href="modifyItem.html?configId='
-                    + item.configId
-                    + '"><i title="修改" class="icon-edit"></i></a>';
+                link = '<a target="_blank" href="modifyItem.html?configId=' + item.configId + '"><i title="修改" class="icon-edit"></i></a>';
             }
-            var downloadlink = '<a href="/api/web/config/download/'
-                + +item.configId
-                + '"><i title="下载" class="icon-download-alt"></i></a>';
+            var downloadlink = '<a href="/api/web/config/download/' + +item.configId + '"><i title="下载" class="icon-download-alt"></i></a>';
 
             var type = '<i title="配置项" class="icon-leaf"></i>';
             if (item.type == "配置文件") {
                 type = '<i title="配置文件" class="icon-file"></i>';
             }
 
-            var data_fetch_url = '<a href="javascript:void(0);" class="valuefetch'
-                + item.configId + '" data-placement="left">点击获取</a>'
+            var data_fetch_url = '<a href="javascript:void(0);" class="valuefetch' + item.configId + '" data-placement="left">点击获取</a>'
 
             var isRight = "OK";
             var style = "";
@@ -212,15 +201,25 @@
                 isRight = "; 其中" + item.errorNum + "台出现错误";
                 style = "text-error";
             }
-            var machine_url = '<a href="javascript:void(0);" class="' + style
-                + ' machineinfo' + item.configId
-                + '" data-placement="left">' + item.machineSize + '台 '
-                + isRight + '</a>'
+            var machine_url = '<a href="javascript:void(0);" class="' + style + ' machineinfo' + item.configId + '" data-placement="left">' + item.machineSize + '台 ' + isRight + '</a>'
 
-            return Util.string.format(mainTpl,'', item.appId,
-                item.version, item.envId, item.envName, type, item.key,
-                item.createTime, item.modifyTime, item.value, link,
-                del_link, i + 1, downloadlink, data_fetch_url, machine_url);
+            return Util.string.format(mainTpl, '',
+                item.appId, // 1
+                item.version,// 2
+                item.envId,// 3
+                item.envName,// 4
+                type,// 5
+                item.key,// 6
+                item.createTime,// 7
+                item.modifyTime,// 8
+                item.value,// 9
+                link,// 10
+                del_link,// 11
+                i + 1,// 12
+                downloadlink,// 13
+                data_fetch_url,// 14
+                machine_url// 15
+            );
         }
     }
 
@@ -254,7 +253,6 @@
         }
         return tip;
     }
-
 
     //
     // 渲染 配置 value
@@ -303,7 +301,6 @@
                 }
             });
     }
-
 
     // 详细列表绑定事件
     function bindDetailEvent(result) {
