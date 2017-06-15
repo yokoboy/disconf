@@ -77,6 +77,7 @@ var authInfo;
                     cantOpt.push(allOpt[i]);
                 }
             }
+            console.info(canOpt)
             console.info(cantOpt)
 
             for (var index in cantOpt) {

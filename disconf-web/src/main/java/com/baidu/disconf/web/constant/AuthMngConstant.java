@@ -25,5 +25,10 @@ public interface AuthMngConstant {
         put(ZK, "查看ZK");
     }};
 
+    String AUTH_MNG = "0-0";
+    String CHANGE_APP = "0-1";
+    String CHANGE_CONFIG_ITEM = "0-2";
+    String CHANGE_CONFIG_FILE = "0-3";
+
 
 }

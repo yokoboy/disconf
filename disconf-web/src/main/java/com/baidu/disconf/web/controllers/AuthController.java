@@ -109,7 +109,7 @@ public class AuthController extends BaseController {
      * 获取所有权限
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public JsonObjectBase authList() {
+    public JsonObjectBase authList()    {
         List<EnvVO> envVO = envMgr.getVoList(); // 环境
         List<AppVO> authAppVoList = appMgr.getAppVoList(); // APP
 
@@ -120,8 +120,24 @@ public class AuthController extends BaseController {
             put("open", true);
         }});
         data.add(new HashMap<String, Object>() {{
-            put("id", "0-0");
+            put("id", AuthMngConstant.AUTH_MNG);
             put("name", "权限管理");
+            put("pId", "0");
+        }});
+        data.add(new HashMap<String, Object>() {{
+            put("id", AuthMngConstant.CHANGE_APP);
+            put("name", "新建APP");
+            put("pId", "0");
+        }});
+        data.add(new HashMap<String, Object>() {{
+            put("id", AuthMngConstant.CHANGE_CONFIG_ITEM);
+            put("name", "新建配置项");
+            put("pId", "0");
+        }});
+
+        data.add(new HashMap<String, Object>() {{
+            put("id", AuthMngConstant.CHANGE_CONFIG_ITEM);
+            put("name", "新建配置文件");
             put("pId", "0");
         }});
 
