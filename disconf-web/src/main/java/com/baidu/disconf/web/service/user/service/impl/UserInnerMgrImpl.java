@@ -44,6 +44,9 @@ public class UserInnerMgrImpl implements UserInnerMgr {
     public Set<Long> getVisitorAppIds() {
 
         Visitor visitor = ThreadContext.getSessionVisitor();
+        if (null == visitor) {
+            return null;
+        }
         return visitor.getAppIds();
     }
 }

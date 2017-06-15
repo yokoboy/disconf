@@ -105,6 +105,7 @@
 
                         <form id="form" action="/config/" method="post" class="private-form clearfix">
                             <h2 class="autoPush-detail-title">修改权限</h2>
+                            <h4 id="cur-role" data-id=""></h4>
 
                             <div id="authInfo" class="ztree">
 
@@ -150,9 +151,30 @@
 </style>
 
 <script type="application/javascript">
-
+    var authInfo;
+    // zTree 的参数配置，深入使用请参考 API 文档（setting 配置详解）
+    var setting = {
+        check: {
+            enable: true
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        }
+    };
     function roleItemClassClick(roleId) {
-        alert(roleId)
+
+        $.getJSON("/api/auth_mng/list", function (data, status) {
+            authInfo = $.fn.zTree.init($("#authInfo"), setting, data.result.allAuths);
+            $.getJSON("/api/auth_mng/role/" + roleId, function (data, status) {
+                console.info(data)
+                for (var index in data.result.authInfos) {
+                    var checkedNode = data.result.authInfos[index]["authInfo"];
+                    authInfo.checkNode(authInfo.getNodeByParam("id", checkedNode), true, true);
+                }
+            });
+        });
     }
 
 
@@ -175,41 +197,31 @@
             $(".roleItem").on("click", function () {
                 var dataId = $(this).attr("data-id");
                 roleItemClassClick(dataId)
+                var name = $(this).text();
+                $("#cur-role").text(name).attr("data-id", dataId)
+
             })
         });
 
 
-        var authInfo;
-        // zTree 的参数配置，深入使用请参考 API 文档（setting 配置详解）
-        var setting = {
-            check: {
-                enable: true
-            },
-            data: {
-                simpleData: {
-                    enable: true
+        $("#file_submit").on("click", function () {
+            // 提交
+            var nodes = authInfo.getCheckedNodes();
+            var postDataArr = [];
+            for (var index in nodes) {
+                var node = nodes[index];
+                if (!node.isParent) {
+                    postDataArr.push(node.id);
                 }
             }
-        };
 
-
-        // zTree 的数据属性，深入使用请参考 API 文档（zTreeNode 节点数据详解）
-        var zNodes = [
-            {id: 1, pId: 0, name: "随意勾选 1"},
-            {id: 11, pId: 1, name: "随意勾选 1-1"},
-            {id: 111, pId: 11, name: "随意勾选 1-1-1"},
-            {id: 112, pId: 11, name: "随意勾选 1-1-2"},
-            {id: 12, pId: 1, name: "随意勾选 1-2"},
-            {id: 121, pId: 12, name: "随意勾选 1-2-1"},
-            {id: 122, pId: 12, name: "随意勾选 1-2-2"},
-            {id: 2, pId: 0, name: "随意勾选 2", checked: true},
-            {id: 21, pId: 2, name: "随意勾选 2-1"},
-            {id: 22, pId: 2, name: "随意勾选 2-2"},
-            {id: 221, pId: 22, name: "随意勾选 2-2-1", checked: true},
-            {id: 222, pId: 22, name: "随意勾选 2-2-2"},
-            {id: 23, pId: 2, name: "随意勾选 2-3"}
-        ];
-        authInfo = $.fn.zTree.init($("#authInfo"), setting, zNodes);
+            $.post("/api/auth_mng/role/" + ($("#cur-role").attr("data-id")), {
+                auth: postDataArr.join(",")
+            }, function (data, status) {
+                console.log(status)
+                console.log(data)
+            })
+        })
 
     })
 </script>
