@@ -1,40 +1,31 @@
 package com.baidu.disconf.web.controllers;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.List;
-
-import javax.validation.Valid;
-
+import com.baidu.disconf.web.controllers.validator.ConfigValidator;
+import com.baidu.disconf.web.service.config.form.ConfListForm;
+import com.baidu.disconf.web.service.config.form.VersionListForm;
+import com.baidu.disconf.web.service.config.service.impl.ConfigMgrImpl;
+import com.baidu.disconf.web.service.config.vo.ConfListVo;
+import com.baidu.disconf.web.service.config.vo.MachineListVo;
 import com.baidu.disconf.web.utils.MyStringUtils;
+import com.baidu.disconf.web.utils.TarUtils;
+import com.baidu.dsp.common.constant.WebConstants;
+import com.baidu.dsp.common.controller.BaseController;
+import com.baidu.dsp.common.exception.DocumentNotFoundException;
+import com.baidu.dsp.common.vo.JsonObjectBase;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import com.baidu.disconf.web.service.config.form.ConfListForm;
-import com.baidu.disconf.web.service.config.form.VersionListForm;
-import com.baidu.disconf.web.service.config.service.ConfigMgr;
-import com.baidu.disconf.web.service.config.vo.ConfListVo;
-import com.baidu.disconf.web.service.config.vo.MachineListVo;
-import com.baidu.disconf.web.utils.TarUtils;
-import com.baidu.disconf.web.controllers.validator.ConfigValidator;
-import com.baidu.dsp.common.constant.WebConstants;
-import com.baidu.dsp.common.constraint.validation.PageOrderValidator;
-import com.baidu.dsp.common.controller.BaseController;
-import com.baidu.dsp.common.dao.Columns;
-import com.baidu.dsp.common.exception.DocumentNotFoundException;
-import com.baidu.dsp.common.vo.JsonObjectBase;
-import com.baidu.ub.common.db.DaoPageResult;
+import javax.validation.Valid;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.List;
 
 /**
  * 专用于配置读取
@@ -42,17 +33,36 @@ import com.baidu.ub.common.db.DaoPageResult;
  * @author liaoqiqi
  * @version 2014-6-22
  */
-@Controller
+@RestController
 @RequestMapping(WebConstants.API_PREFIX + "/web/config")
 public class ConfigReadController extends BaseController {
 
     protected static final Logger LOG = LoggerFactory.getLogger(ConfigReadController.class);
 
     @Autowired
-    private ConfigMgr configMgr;
+    private ConfigMgrImpl configMgr;
 
     @Autowired
     private ConfigValidator configValidator;
+
+    /**
+     * 获取列表,有分页的
+     */
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public JsonObjectBase getConfigList(@RequestParam("env_app") String envApp) {
+        List<ConfListVo> confListVos = configMgr.selectConfigList(envApp, true, false);
+        return buildSuccess(confListVos);
+    }
+
+    /**
+     * 获取列表,有分页的, 没有ZK信息
+     */
+    @RequestMapping(value = "/simple/list", method = RequestMethod.GET)
+    public JsonObjectBase getSimpleConfigList(@RequestParam("env_app") String envApp) {
+        List<ConfListVo> confListVos = configMgr.selectConfigList(envApp, false, false);
+        return buildSuccess(confListVos);
+    }
+
 
     /**
      * 获取版本的List
@@ -60,64 +70,15 @@ public class ConfigReadController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/versionlist", method = RequestMethod.GET)
-    @ResponseBody
     public JsonObjectBase getVersionList(@Valid VersionListForm versionListForm) {
-
         LOG.info(versionListForm.toString());
-
-        List<String> versionList =
-                configMgr.getVersionListByAppEnv(versionListForm.getAppId(), versionListForm.getEnvId());
-
+        List<String> versionList = configMgr.getVersionListByAppEnv(versionListForm.getAppId(), versionListForm.getEnvId());
         return buildListSuccess(versionList, versionList.size());
     }
 
-    /**
-     * 获取列表,有分页的
-     *
-     * @param confListForm
-     * @return
-     */
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    @ResponseBody
-    public JsonObjectBase getConfigList(@Valid ConfListForm confListForm) {
-
-        LOG.info(confListForm.toString());
-
-        // 设置排序方式
-        confListForm.getPage().setOrderBy(Columns.NAME);
-        confListForm.getPage().setOrder(PageOrderValidator.ASC);
-
-        DaoPageResult<ConfListVo> configs = configMgr.getConfigList(confListForm, true, false);
-
-        return buildListSuccess(configs);
-    }
-
-    /**
-     * 获取列表,有分页的, 没有ZK信息
-     *
-     * @param confListForm
-     * @return
-     */
-    @RequestMapping(value = "/simple/list", method = RequestMethod.GET)
-    @ResponseBody
-    public JsonObjectBase getSimpleConfigList(@Valid ConfListForm confListForm) {
-
-        LOG.info(confListForm.toString());
-
-        // 设置排序方式
-        confListForm.getPage().setOrderBy(Columns.NAME);
-        confListForm.getPage().setOrder(PageOrderValidator.ASC);
-
-        DaoPageResult<ConfListVo> configs = configMgr.getConfigList(confListForm, false, false);
-
-        return buildListSuccess(configs);
-    }
 
     /**
      * 获取某个
-     *
-     * @param configId
-     * @return
      */
     @RequestMapping(value = "/{configId}", method = RequestMethod.GET)
     @ResponseBody

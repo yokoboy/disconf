@@ -1,13 +1,42 @@
-var env_app; //
 var mainTpl; // 表格模版
 var api = {
-    batch_download: "/api/web/config/downloadfilebatch?env_app="
+    can_opt: "/api/auth_mng/env_app_opt?env_app=",
+    // 批量下载
+    batch_download: "/api/web/config/downloadfilebatch?env_app=",
+    config_list: "/api/web/config/list?env_app="
 };
+var authInfo;
+// zTree 的参数配置，深入使用请参考 API 文档（setting 配置详解）
+
 
 (function ($) {
 
     getSession();
     cleanPage();
+
+    var setting = {
+        data: {
+            simpleData: {
+                enable: true
+            }
+        }, callback: {
+            onClick: zTreeOnClick
+        }
+    };
+
+    function zTreeOnClick(event, treeId, treeNode) {
+        if (!treeNode.isParent) {
+            main(treeNode.id);
+
+            removeCantOpt(treeNode.id);
+        }
+    }
+
+    // 索取所有角色
+    $.getJSON("/api/auth_mng/env_app", function (data, status) {
+        authInfo = $.fn.zTree.init($("#authInfo"), setting, data.result.envApp);
+    });
+
 
     mainTpl = $("#tbodyTpl").html();
 
@@ -32,39 +61,53 @@ var api = {
 
     }
 
+    function removeCantOpt(env_app) {
+        $.getJSON(api.can_opt + env_app, function (data) {
+            var canOpt = data.result.opt;
+            var allOpt = ["1", "2", "3", "4", "5", "6"];
+            var cantOpt = [];
+            for (var i in allOpt) {
+                var exist = false;
+                for (var j in canOpt) {
+                    if (allOpt[i] == canOpt[j]) {
+                        exist = true;
+                    }
+                }
+                if (!exist) {
+                    cantOpt.push(allOpt[i]);
+                }
+            }
+            console.info(cantOpt)
+
+            for (var index in cantOpt) {
+                console.info(".opt_" + cantOpt[index])
+                $(".opt_" + cantOpt[index]).hide();
+            }
+        });
+    }
+
+
     //
     // 渲染主列表
     //
-    function main() {
+    function main(env_app) {
         cleanPage();
+        if (!env_app) {
+            return;
+        }
 
         $("#zk_deploy").show().children().show();
 
-        $("#batch_download").attr('href', "/api/web/config/downloadfilebatch?appId=" + appId + "&envId=" + envId + "&version=" + version);
+        $("#batch_download").attr('href', api.batch_download + env_app);
 
         $("#mainlist_error").hide();
-        var parameter = ""
 
-        url = "/api/web/config/list";
-        if (appId == null && envId == null && version == null) {
+        $.ajax({type: "GET", url: api.config_list + env_app}).done(function (data) {
+            // console.log(data)
 
-        } else {
-            url += "?";
-            if (appId != -1) {
-                url += "appId=" + appId + "&";
-            }
-            if (envId != -1) {
-                url += "envId=" + envId + "&";
-            }
-            if (version != "#") {
-                url += "version=" + version + "&";
-            }
-        }
-
-        $.ajax({type: "GET", url: url}).done(function (data) {
             if (data.success === "true") {
                 var html = "";
-                var result = data.page.result;
+                var result = data.result;
                 $.each(result, function (index, item) {
                     html += renderItem(item, index);
                 });
@@ -84,25 +127,27 @@ var api = {
 
             // ZK绑定情况
             fetchZkDeploy();
+
+            removeCantOpt(env_app)
         });
         // 渲染主列表
         function renderItem(item, i) {
 
             var link = "";
-            del_link = '<a id="itemDel' + item.configId + '" style="cursor: pointer; cursor: hand; " ><i title="删除" class="icon-remove"></i></a>';
+            del_link = '<a id="itemDel' + item.configId + '" class="opt_5" style="cursor: pointer; cursor: hand; " ><i title="删除" class="icon-remove"></i></a>';
             if (item.type == "配置文件") {
-                link = '<a target="_blank" href="modifyFile.html?configId=' + item.configId + '"><i title="修改" class="icon-edit"></i></a>';
+                link = '<a target="_blank" class="opt_2" href="modifyFile.html?configId=' + item.configId + '"><i title="修改" class="icon-edit"></i></a>';
             } else {
-                link = '<a target="_blank" href="modifyItem.html?configId=' + item.configId + '"><i title="修改" class="icon-edit"></i></a>';
+                link = '<a target="_blank" class="opt_2" href="modifyItem.html?configId=' + item.configId + '"><i title="修改" class="icon-edit"></i></a>';
             }
-            var downloadlink = '<a href="/api/web/config/download/' + +item.configId + '"><i title="下载" class="icon-download-alt"></i></a>';
+            var downloadlink = '<a href="/api/web/config/download/' + +item.configId + '" class="opt_3"><i title="下载" class="icon-download-alt"></i></a>';
 
             var type = '<i title="配置项" class="icon-leaf"></i>';
             if (item.type == "配置文件") {
                 type = '<i title="配置文件" class="icon-file"></i>';
             }
 
-            var data_fetch_url = '<a href="javascript:void(0);" class="valuefetch' + item.configId + '" data-placement="left">点击获取</a>'
+            var data_fetch_url = '<a href="javascript:void(0);" class="opt_1 valuefetch' + item.configId + '" data-placement="left">点击获取</a>'
 
             var isRight = "OK";
             var style = "";
@@ -110,7 +155,7 @@ var api = {
                 isRight = "; 其中" + item.errorNum + "台出现错误";
                 style = "text-error";
             }
-            var machine_url = '<a href="javascript:void(0);" class="' + style + ' machineinfo' + item.configId + '" data-placement="left">' + item.machineSize + '台 ' + isRight + '</a>'
+            var machine_url = '<a href="javascript:void(0);" class="' + style + ' machineinfo' + item.configId + '  opt_6" data-placement="left">' + item.machineSize + '台 ' + isRight + '</a>'
 
             return Util.string.format(mainTpl, '',
                 item.appId, // 1

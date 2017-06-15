@@ -1,11 +1,8 @@
 package com.baidu.disconf.web.service.config.service.impl;
 
 import com.baidu.disconf.core.common.constants.DisConfigTypeEnum;
-import com.baidu.disconf.web.constant.CommonConstants;
 import com.baidu.disconf.web.config.ApplicationPropertyConfigVO;
-import com.baidu.disconf.web.service.env.model.EnvBO;
-import com.baidu.disconf.web.service.env.service.impl.EnvMgrImpl;
-import com.baidu.disconf.web.service.zookeeper.service.ZooKeeperDriver;
+import com.baidu.disconf.web.constant.CommonConstants;
 import com.baidu.disconf.web.service.app.bo.App;
 import com.baidu.disconf.web.service.app.service.AppMgr;
 import com.baidu.disconf.web.service.config.bo.Config;
@@ -16,9 +13,12 @@ import com.baidu.disconf.web.service.config.service.ConfigHistoryMgr;
 import com.baidu.disconf.web.service.config.service.ConfigMgr;
 import com.baidu.disconf.web.service.config.vo.ConfListVo;
 import com.baidu.disconf.web.service.config.vo.MachineListVo;
+import com.baidu.disconf.web.service.env.model.EnvBO;
+import com.baidu.disconf.web.service.env.service.impl.EnvMgrImpl;
 import com.baidu.disconf.web.service.zookeeper.dto.ZkDisconfData;
 import com.baidu.disconf.web.service.zookeeper.dto.ZkDisconfData.ZkDisconfDataItem;
 import com.baidu.disconf.web.service.zookeeper.service.ZkDeployMgr;
+import com.baidu.disconf.web.service.zookeeper.service.ZooKeeperDriver;
 import com.baidu.disconf.web.utils.CodeUtils;
 import com.baidu.disconf.web.utils.DiffUtils;
 import com.baidu.disconf.web.utils.MyStringUtils;
@@ -129,6 +129,52 @@ public class ConfigMgrImpl implements ConfigMgr {
         }
 
         return files;
+    }
+
+    public List<ConfListVo> selectConfigList(String envAppId, boolean fetchZk, final boolean getErrorMessage) {
+        String[] envApp = envAppId.split("-");
+        Long envId = Long.valueOf(envApp[0]);
+        Long appId = Long.valueOf(envApp[1]);
+        //
+        // 数据据结果
+        //
+        List<Config> configList = configDao.getConfByAppEnv(appId, envId);
+
+        final App app = appMgr.getById(appId);
+        final EnvBO envBO = envMgr.getById(envId);
+
+        final boolean myFetchZk = fetchZk;
+        Map<String, ZkDisconfData> zkDataMap = new HashMap<String, ZkDisconfData>();
+        if (myFetchZk) {
+            zkDataMap = zkDeployMgr.getZkDisconfDataMap(app.getName(), envBO.getName(), app.getName());
+        }
+        final Map<String, ZkDisconfData> myzkDataMap = zkDataMap;
+
+        List<ConfListVo> confListVos = new ArrayList<ConfListVo>();
+        for (Config config : configList) {
+            String appNameString = app.getName();
+            String envName = envBO.getName();
+
+            ZkDisconfData zkDisconfData = null;
+            if (myzkDataMap != null && myzkDataMap.keySet().contains(config.getName())) {
+                zkDisconfData = myzkDataMap.get(config.getName());
+            }
+            ConfListVo configListVo = convert(config, appNameString, envName, zkDisconfData);
+
+            // 列表操作不要显示值, 为了前端显示快速(只是内存里操作)
+            if (!myFetchZk && !getErrorMessage) {
+
+                // 列表 value 设置为 ""
+                configListVo.setValue("");
+                configListVo.setMachineList(new ArrayList<ZkDisconfData.ZkDisconfDataItem>());
+            }
+            if (null != configListVo && configListVo.getKey().endsWith(".properties")) {
+                configListVo.setValue(MyStringUtils.clearPassword(configListVo.getValue()));
+            }
+            confListVos.add(configListVo);
+        }
+
+        return confListVos;
     }
 
     /**

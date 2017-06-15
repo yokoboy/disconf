@@ -1,11 +1,5 @@
 package com.baidu.disconf.web.service.config.dao.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import com.baidu.disconf.core.common.constants.DisConfigTypeEnum;
 import com.baidu.disconf.web.constant.CommonConstants;
 import com.baidu.disconf.web.service.config.bo.Config;
@@ -21,6 +15,11 @@ import com.baidu.unbiz.common.genericdao.operator.Match;
 import com.baidu.unbiz.common.genericdao.operator.Modify;
 import com.baidu.unbiz.common.genericdao.operator.Order;
 import com.github.knightliao.apollo.utils.time.DateUtils;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author liaoqiqi
@@ -49,10 +48,7 @@ public class ConfigDaoImpl extends AbstractDao<Long, Config> implements ConfigDa
         if (envId == null) {
             return find(new Match(Columns.APP_ID, appId), new Match(Columns.STATUS, CommonConstants.STATUS_NORMAL));
         } else {
-
-            return find(new Match(Columns.APP_ID, appId), new Match(Columns.ENV_ID, envId),
-                    new Match(Columns.STATUS, CommonConstants.STATUS_NORMAL));
-
+            return find(new Match(Columns.APP_ID, appId), new Match(Columns.ENV_ID, envId), new Match(Columns.STATUS, CommonConstants.STATUS_NORMAL));
         }
     }
 
@@ -90,7 +86,7 @@ public class ConfigDaoImpl extends AbstractDao<Long, Config> implements ConfigDa
         if (hasValue) {
             return find(matchs, new ArrayList<Order>());
         } else {
-            return findColumns(matchs, new String[] {Columns.CONFIG_ID, Columns.TYPE, Columns.NAME, Columns.CREATE_TIME
+            return findColumns(matchs, new String[]{Columns.CONFIG_ID, Columns.TYPE, Columns.NAME, Columns.CREATE_TIME
                     , Columns.UPDATE_TIME, Columns.STATUS, Columns.APP_ID, Columns.ENV_ID, Columns.VERSION});
         }
     }

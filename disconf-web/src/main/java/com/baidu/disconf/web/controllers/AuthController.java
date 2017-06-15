@@ -21,10 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -50,7 +47,26 @@ public class AuthController extends BaseController {
     private UserService userService;
 
     /**
-     * 获取所有权限
+     * 获取左侧菜单
+     */
+    @RequestMapping(value = "/env_app_opt", method = RequestMethod.GET)
+    public JsonObjectBase envAppOpt(@RequestParam("env_app") String envApp) {
+        VisitorDTO curVisitor = userService.getCurVisitor();
+        if (null != curVisitor) {
+            Set<String> optId = new HashSet<String>();
+            List<String> auths = curVisitor.getAuths();
+            for (String auth : auths) {
+                if (auth.startsWith(envApp)) {
+                    optId.add(auth.replace(envApp + "-", ""));
+                }
+            }
+            return buildSuccess("opt", optId);
+        }
+        return buildSuccess("opt", new HashMap());
+    }
+
+    /**
+     * 获取左侧菜单
      */
     @RequestMapping(value = "/env_app", method = RequestMethod.GET)
     public JsonObjectBase envApp() {
@@ -86,7 +102,7 @@ public class AuthController extends BaseController {
             }
             return buildSuccess("envApp", data);
         }
-        return buildSuccess("envApp", new Object());
+        return buildSuccess("envApp", new HashMap());
     }
 
     /**
@@ -137,6 +153,8 @@ public class AuthController extends BaseController {
         return buildSuccess("allAuths", data);
 
     }
+
+    /************************************************角色管理*********************************************************************/
 
     /**
      * 获取所有角色

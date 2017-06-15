@@ -1,11 +1,8 @@
 package com.baidu.disconf.web.config;
 
-import org.springframework.stereotype.Service;
-
 /**
  * @author knightliao
  */
-@Service
 public class ApplicationPropertyConfigVO {
 
     //
@@ -112,9 +109,9 @@ public class ApplicationPropertyConfigVO {
     @Override
     public String toString() {
         return "ApplicationPropertyConfig [emailHost=" + emailHost + ", emailPassword=" + emailPassword +
-                   ", emailUser=" + emailUser + ", emailPort=" + emailPort + ", fromEmail=" + fromEmail +
-                   ", emailReceiver=" + emailReceiver + ", emailMonitorOn=" + emailMonitorOn + ", checkConsistencyOn=" +
-                   checkConsistencyOn + "]";
+                ", emailUser=" + emailUser + ", emailPort=" + emailPort + ", fromEmail=" + fromEmail +
+                ", emailReceiver=" + emailReceiver + ", emailMonitorOn=" + emailMonitorOn + ", checkConsistencyOn=" +
+                checkConsistencyOn + "]";
     }
 
 }

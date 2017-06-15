@@ -103,8 +103,8 @@
                 <div class="span10" style="float:left">
 
                     <div id="zk_deploy" class="row-fluid" style="margin-bottom:5px">
-                        <a id="zk_deploy_button" href="#" class="btn-small btn-primary" style="float:right;" title="" type="button"><b>ZK部署情况</b></a>
-                        <a id="batch_download" href="#" class="btn-small btn-primary" style="float:right;margin-right:5px;" title="" type="button"><b>批量下载</b></a>
+                        <a id="zk_deploy_button" href="#" class="btn-small btn-primary opt_6" style="float:right;" title="" type="button"><b>ZK部署情况</b></a>
+                        <a id="batch_download" href="#" class="btn-small btn-primary opt_4" style="float:right;margin-right:5px;" title="" type="button"><b>批量下载</b></a>
                     </div>
 
                     <div id="zk_deploy_info" class="hide" style="padding-bottom:20px;">
@@ -176,39 +176,7 @@
 <script src="assets/js/jquery.ztree.all.js"></script>
 
 <script type="application/javascript">
-    var authInfo;
-    // zTree 的参数配置，深入使用请参考 API 文档（setting 配置详解）
-    var setting = {
-        data: {
-            simpleData: {
-                enable: true
-            }
-        }, callback: {
-            onClick: zTreeOnClick
-        }
-    };
-    function zTreeOnClick(event, treeId, treeNode) {
-        if (!treeNode.isParent) {
-            alert(treeNode.id)
-        }
-    }
 
-
-    $(function () {
-        getSession();
-
-        // 索取所有角色
-        $.getJSON("/api/auth_mng/env_app", function (data, status) {
-            console.info(data);
-            authInfo = $.fn.zTree.init($("#authInfo"), setting, data.result.envApp);
-
-            $.getJSON("/api/auth_mng/role/2", function (data, status) {
-                console.info(data)
-            });
-
-        });
-
-    })
 </script>
 
 

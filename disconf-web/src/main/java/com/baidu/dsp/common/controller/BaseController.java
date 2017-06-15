@@ -83,7 +83,6 @@ public class BaseController implements ApplicationContextAware {
      * @return
      */
     protected <T> JsonObjectBase buildListSuccess(DaoPageResult<T> data) {
-
         return JsonObjectUtils.buildListSuccess(data.getResult(), data.getTotalCount(), data.getFootResult());
     }
 
