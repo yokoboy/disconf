@@ -1,11 +1,11 @@
 package com.baidu.disconf.web.common.comparator;
 
+import difflib.Chunk;
+import difflib.Delta;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import difflib.Chunk;
-import difflib.Delta;
 
 /**
  * @author knightliao

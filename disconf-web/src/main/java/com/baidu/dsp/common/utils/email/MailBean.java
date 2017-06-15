@@ -14,7 +14,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.baidu.disconf.web.config.ApplicationPropertyConfig;
+import com.baidu.disconf.web.config.ApplicationPropertyConfigVO;
 
 /**
  * 邮件发送公共类
@@ -28,7 +28,7 @@ public class MailBean implements InitializingBean {
     protected static final Logger LOG = LoggerFactory.getLogger(MailBean.class);
 
     @Autowired
-    private ApplicationPropertyConfig emailProperties;
+    private ApplicationPropertyConfigVO emailProperties;
 
     // mail sender
     private JavaMailSenderImpl mailSender = new JavaMailSenderImpl();

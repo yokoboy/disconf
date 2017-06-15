@@ -1,132 +1,42 @@
+var env_app; //
+var mainTpl; // 表格模版
+var api = {
+    batch_download: "/api/web/config/downloadfilebatch?env_app="
+};
+
 (function ($) {
 
-
     getSession();
+    cleanPage();
 
-    var appId = -1;
-    var envId = -1;
-    var version = "#";
+    mainTpl = $("#tbodyTpl").html();
 
-    //
-    // 获取APP信息
-    //
-    $.ajax({
-        type: "GET",
-        url: "/api/app/list"
-    }).done(
-        function (data) {
-            if (data.success === "true") {
-                var html = "";
-                var result = data.page.result;
-                $
-                    .each(
-                        result,
-                        function (index, item) {
-                            html += '<li role="presentation" role="menuitem" tabindex="-1"><a rel='
-                                + item.id
-                                + ' href="#">APP: '
-                                + item.name
-                                + '</a></li>';
-                        });
-                $("#applist").html(html);
-            }
-        });
-
-
-    $("#applist").on('click', 'li a', function (e) {
-        appId = $(this).attr('rel');
-        $("#app_info").html(", " + $(this).text());
-        $("#appDropdownMenuTitle").text($(this).text());
-        version = "#";
-        fetchVersion(appId, envId);
-    });
-
-    //
-    // 获取版本信息
-    //
-    function fetchVersion(appId, envId) {
-
-        var base_url = "/api/web/config/versionlist?appId=" + appId;
-        url = base_url;
-        if (envId != -1) {
-            url = base_url + "&envId=" + envId;
-        }
-
-        $.ajax({
-            type: "GET",
-            url: url
-        }).done(function (data) {
-            if (data.success === "true") {
-                var html = "";
-                var result = data.page.result;
-                $.each(result, function (index, item) {
-                    html += '<li><a href="#">' + item + '</a></li>';
-                });
-                $("#versionChoice").html(html);
-
-                if (html != "") {
-                    $("#versionChoice li:first").addClass("active");
-                    version = $("#versionChoice li:first a").text();
-                }
-                fetchMainList();
-            }
-        });
-        $("#versionChoice").unbind('click').on('click', 'li a', function (e) {
-            version = $(this).text();
-            $("#versionChoice li").removeClass("active");
-            $(this).parent().addClass("active");
-            fetchMainList();
-            e.stopPropagation();
-        });
+    function tip(info) {
+        $("#mainlist_error").text(info).show();
     }
 
-    //
-    // 获取Env信息
-    //
-    $.ajax({
-        type: "GET",
-        url: "/api/env/list"
-    }).done(
-        function (data) {
-            if (data.success === "true") {
-                var html = "";
-                var result = data.page.result;
-                $.each(result, function (index, item) {
-                    html += '<li><a rel=' + item.id + ' href="#">'
-                        + item.name + ' 环境</a></li>';
-                });
-                $("#envChoice").html(html);
-            }
-        });
+    function cleanPage() {
+        // 提示
+        tip("请选择环境和应用");
+        // 清空表格内容
+        $("#accountBody").html("");
+        // 隐藏表格
+        $("#mainlist").hide();
+        // 隐藏公共按钮
+        $("#zk_deploy").hide();
+        $("#batch_download").attr("href", "###");
+        $("#zk_deploy_button").unbind("click"); //
+        $("#zk_deploy_info").hide();
+        $("#zk_deploy_info_pre").html("");
 
 
-    $("#envChoice").on('click', 'li a', function () {
-        envId = $(this).attr('rel');
-        $("#env_info").html($(this).text());
-        $("#envChoice li").removeClass("active");
-        $(this).parent().addClass("active");
-        version = "#";
-        fetchVersion(appId, envId);
-    });
-
-    fetchMainList();
+    }
 
     //
     // 渲染主列表
     //
-    function fetchMainList() {
-
-        // 参数不正确，清空列表
-        if (appId == -1 || envId == -1) {
-            $("#mainlist_error").text("请选择" + getTips()).show();
-            $("#accountBody").html("");
-            $("#mainlist").hide();
-            $("#zk_deploy").hide();
-            return;
-        }
-
-        if (version == "#") {
-        }
+    function main() {
+        cleanPage();
 
         $("#zk_deploy").show().children().show();
 
@@ -175,7 +85,6 @@
             // ZK绑定情况
             fetchZkDeploy();
         });
-        var mainTpl = $("#tbodyTpl").html();
         // 渲染主列表
         function renderItem(item, i) {
 
@@ -344,20 +253,9 @@
             url: "/api/web/config/" + id
         }).done(function (data) {
             if (data.success === "true") {
-                fetchMainList();
+                main();
             }
         });
-    }
-
-    //
-    function getTips() {
-        if (appId == -1) {
-            return "APP";
-        }
-        if (envId == -1) {
-            return "环境";
-        }
-        return "参数";
     }
 
     //

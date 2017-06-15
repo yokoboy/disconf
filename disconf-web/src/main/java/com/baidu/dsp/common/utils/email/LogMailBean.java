@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.baidu.disconf.web.config.ApplicationPropertyConfig;
-import com.baidu.disconf.web.service.user.dto.Visitor;
+import com.baidu.disconf.web.config.ApplicationPropertyConfigVO;
+import com.baidu.disconf.web.service.user.model.VisitorDTO;
 import com.baidu.ub.common.commons.ThreadContext;
 
 /**
@@ -35,7 +35,7 @@ public class LogMailBean {
     public static final String ALARM_MAIL_TITLE = "fatal message mail ";
 
     @Autowired
-    private ApplicationPropertyConfig emailProperties;
+    private ApplicationPropertyConfigVO emailProperties;
 
     @Autowired
     private MailBean mailBean;
@@ -63,10 +63,10 @@ public class LogMailBean {
         //
         // 确定 标题
         //
-        Visitor visitor = ThreadContext.getSessionVisitor();
+        VisitorDTO visitorDTO = ThreadContext.getSessionVisitor();
 
-        if (null != visitor) {
-            titleBuffer.append("Current Login UcId: " + visitor.getId());
+        if (null != visitorDTO) {
+            titleBuffer.append("Current Login UcId: " + visitorDTO.getId());
             titleBuffer.append(" ");
         }
 
@@ -119,10 +119,10 @@ public class LogMailBean {
         }
 
         String localName = "";
-        Visitor visitor = ThreadContext.getSessionVisitor();
-        if (visitor != null) {
-            LOG.info(visitor.toString());
-            localName += visitor.getLoginUserName() + " ";
+        VisitorDTO visitorDTO = ThreadContext.getSessionVisitor();
+        if (visitorDTO != null) {
+            LOG.info(visitorDTO.toString());
+            localName += visitorDTO.getLoginUserName() + " ";
         }
 
         try {

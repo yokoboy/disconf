@@ -1,9 +1,9 @@
 package com.baidu.dsp.common.interceptor.login;
 
+import com.baidu.disconf.web.constant.LoginConstant;
 import com.baidu.disconf.web.service.user.constant.UserConstant;
-import com.baidu.disconf.web.service.user.dto.Visitor;
-import com.baidu.disconf.web.web.auth.constant.LoginConstant;
-import com.baidu.disconf.web.web.auth.login.RedisLogin;
+import com.baidu.disconf.web.service.user.model.VisitorDTO;
+import com.baidu.disconf.web.service.user.service.RedisLoginImpl;
 import com.baidu.dsp.common.constant.ErrorCode;
 import com.baidu.dsp.common.interceptor.WebCommonInterceptor;
 import com.github.knightliao.apollo.utils.tool.TokenUtil;
@@ -29,7 +29,7 @@ public class LoginInterceptor extends WebCommonInterceptor {
     protected static final Logger LOG = LoggerFactory.getLogger(LoginInterceptor.class);
 
     @Autowired
-    private RedisLogin redisLogin;
+    private RedisLoginImpl redisLogin;
 
     private List<String> notJsonPathList;
 
@@ -60,7 +60,7 @@ public class LoginInterceptor extends WebCommonInterceptor {
         // 判断session中是否有visitor
         //
         HttpSession session = request.getSession();
-        Visitor visitor = (Visitor) session.getAttribute(UserConstant.USER_KEY);
+        VisitorDTO visitorDTO = (VisitorDTO) session.getAttribute(UserConstant.USER_KEY);
 
         //
         // 去掉不需拦截的path
@@ -75,7 +75,7 @@ public class LoginInterceptor extends WebCommonInterceptor {
             for (String path : notInterceptPathList) {
                 if (requestPath.contains(path)) {
                     // 每次都更新session中的登录信息
-                    redisLogin.updateSessionVisitor(session, visitor);
+                    redisLogin.updateSessionVisitor(session, visitorDTO);
                     return true;
                 }
             }
@@ -89,12 +89,12 @@ public class LoginInterceptor extends WebCommonInterceptor {
         //
         // session中没有该信息,则从 redis上获取，并更新session的数据
         //
-        if (visitor == null) {
-            Visitor redisVisitor = redisLogin.isLogin(request);
+        if (visitorDTO == null) {
+            VisitorDTO redisVisitorDTO = redisLogin.isLogin(request);
             //
             // 有登录信息
             //
-            if (redisVisitor == null) {
+            if (redisVisitorDTO == null) {
                 // 还是没有登录
                 returnJsonSystemError(request, response, "login.error", ErrorCode.LOGIN_ERROR);
                 return false;
@@ -103,7 +103,7 @@ public class LoginInterceptor extends WebCommonInterceptor {
 
 
         // 每次都更新session中的登录信息
-        redisLogin.updateSessionVisitor(session, visitor);
+        redisLogin.updateSessionVisitor(session, visitorDTO);
 
         return true;
     }

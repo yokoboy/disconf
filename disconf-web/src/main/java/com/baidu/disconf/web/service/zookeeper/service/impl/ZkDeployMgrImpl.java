@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.baidu.disconf.core.common.constants.DisConfigTypeEnum;
 import com.baidu.disconf.core.common.path.ZooPathMgr;
-import com.baidu.disconf.web.innerapi.zookeeper.ZooKeeperDriver;
+import com.baidu.disconf.web.service.zookeeper.service.ZooKeeperDriver;
 import com.baidu.disconf.web.service.zookeeper.config.ZooConfig;
 import com.baidu.disconf.web.service.zookeeper.dto.ZkDisconfData;
 import com.baidu.disconf.web.service.zookeeper.service.ZkDeployMgr;

@@ -1,23 +1,13 @@
 package com.baidu.disconf.web.tasks.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
-import com.baidu.disconf.web.config.ApplicationPropertyConfig;
+import com.baidu.disconf.web.config.ApplicationPropertyConfigVO;
 import com.baidu.disconf.web.service.app.bo.App;
 import com.baidu.disconf.web.service.app.service.AppMgr;
 import com.baidu.disconf.web.service.config.form.ConfListForm;
 import com.baidu.disconf.web.service.config.service.ConfigMgr;
 import com.baidu.disconf.web.service.config.vo.ConfListVo;
-import com.baidu.disconf.web.service.env.bo.Env;
-import com.baidu.disconf.web.service.env.service.EnvMgr;
+import com.baidu.disconf.web.service.env.model.EnvBO;
+import com.baidu.disconf.web.service.env.service.impl.EnvMgrImpl;
 import com.baidu.disconf.web.service.zookeeper.dto.ZkDisconfData.ZkDisconfDataItem;
 import com.baidu.disconf.web.service.zookeeper.service.ZkDeployMgr;
 import com.baidu.disconf.web.tasks.IConfigConsistencyMonitorService;
@@ -25,6 +15,15 @@ import com.baidu.dsp.common.interceptor.session.SessionInterceptor;
 import com.baidu.dsp.common.utils.email.LogMailBean;
 import com.baidu.ub.common.db.DaoPageResult;
 import com.github.knightliao.apollo.utils.tool.TokenUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * http://blog.csdn.net/sd4000784/article/details/7745947 <br/>
@@ -38,7 +37,7 @@ public class ConfigConsistencyMonitorServiceImpl implements IConfigConsistencyMo
     protected static final Logger LOG = LoggerFactory.getLogger(ConfigConsistencyMonitorServiceImpl.class);
 
     @Autowired
-    private ApplicationPropertyConfig applicationPropertyConfig;
+    private ApplicationPropertyConfigVO applicationPropertyConfig;
 
     @Autowired
     private ZkDeployMgr zkDeployMgr;
@@ -47,7 +46,7 @@ public class ConfigConsistencyMonitorServiceImpl implements IConfigConsistencyMo
     private AppMgr appMgr;
 
     @Autowired
-    private EnvMgr envMgr;
+    private EnvMgrImpl envMgr;
 
     @Autowired
     private ConfigMgr configMgr;
@@ -97,29 +96,29 @@ public class ConfigConsistencyMonitorServiceImpl implements IConfigConsistencyMo
     private void checkMgr() {
 
         List<App> apps = appMgr.getAppList();
-        List<Env> envs = envMgr.getList();
+        List<EnvBO> envBOS = envMgr.getList();
 
         // app
         for (App app : apps) {
 
-            checkAppConfigConsistency(app, envs);
+            checkAppConfigConsistency(app, envBOS);
         }
     }
 
     /**
      * 校验APP 一致性
      */
-    private void checkAppConfigConsistency(App app, List<Env> envs) {
+    private void checkAppConfigConsistency(App app, List<EnvBO> envBOS) {
 
         // env
-        for (Env env : envs) {
+        for (EnvBO envBO : envBOS) {
 
             // version
-            List<String> versionList = configMgr.getVersionListByAppEnv(app.getId(), env.getId());
+            List<String> versionList = configMgr.getVersionListByAppEnv(app.getId(), envBO.getId());
 
             for (String version : versionList) {
 
-                checkAppEnvVersionConfigConsistency(app, env, version);
+                checkAppEnvVersionConfigConsistency(app, envBO, version);
             }
         }
     }
@@ -127,9 +126,9 @@ public class ConfigConsistencyMonitorServiceImpl implements IConfigConsistencyMo
     /**
      * 校验APP/ENV/VERSION 一致性
      */
-    private void checkAppEnvVersionConfigConsistency(App app, Env env, String version) {
+    private void checkAppEnvVersionConfigConsistency(App app, EnvBO envBO, String version) {
 
-        String monitorInfo = "monitor " + app.getName() + "\t" + env.getName() + "\t" + version;
+        String monitorInfo = "monitor " + app.getName() + "\t" + envBO.getName() + "\t" + version;
         LOG.info(monitorInfo);
 
         //
@@ -137,7 +136,7 @@ public class ConfigConsistencyMonitorServiceImpl implements IConfigConsistencyMo
         //
         ConfListForm confiConfListForm = new ConfListForm();
         confiConfListForm.setAppId(app.getId());
-        confiConfListForm.setEnvId(env.getId());
+        confiConfListForm.setEnvId(envBO.getId());
         confiConfListForm.setVersion(version);
 
         //

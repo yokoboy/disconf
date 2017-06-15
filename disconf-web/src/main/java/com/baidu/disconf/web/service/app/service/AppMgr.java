@@ -6,7 +6,7 @@ import java.util.Set;
 
 import com.baidu.disconf.web.service.app.bo.App;
 import com.baidu.disconf.web.service.app.form.AppNewForm;
-import com.baidu.disconf.web.service.app.vo.AppListVo;
+import com.baidu.disconf.web.service.app.vo.AppVO;
 
 /**
  * @author liaoqiqi
@@ -33,7 +33,7 @@ public interface AppMgr {
      *
      * @return
      */
-    List<AppListVo> getAuthAppVoList();
+    List<AppVO> getAppVoList();
 
     /**
      * 获取一堆 APP

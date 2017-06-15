@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.baidu.disconf.web.common.email.MailSenderInfo;
 import com.baidu.disconf.web.common.email.SimpleMailSender;
-import com.baidu.disconf.web.config.ApplicationPropertyConfig;
+import com.baidu.disconf.web.config.ApplicationPropertyConfigVO;
 
 /**
  * @author liaoqiqi
@@ -15,7 +15,7 @@ import com.baidu.disconf.web.config.ApplicationPropertyConfig;
 public class EmailService {
 
     @Autowired
-    private ApplicationPropertyConfig emailProperties;
+    private ApplicationPropertyConfigVO emailProperties;
 
     /**
      * 发送HTML邮箱

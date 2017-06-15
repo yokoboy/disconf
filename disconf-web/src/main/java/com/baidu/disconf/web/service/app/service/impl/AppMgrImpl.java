@@ -1,26 +1,18 @@
 package com.baidu.disconf.web.service.app.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.baidu.disconf.web.service.app.bo.App;
+import com.baidu.disconf.web.service.app.dao.AppDao;
+import com.baidu.disconf.web.service.app.form.AppNewForm;
+import com.baidu.disconf.web.service.app.service.AppMgr;
+import com.baidu.disconf.web.service.app.vo.AppVO;
+import com.baidu.dsp.common.constant.DataFormatConstants;
+import com.github.knightliao.apollo.utils.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.baidu.disconf.web.service.app.bo.App;
-import com.baidu.disconf.web.service.app.dao.AppDao;
-import com.baidu.disconf.web.service.app.form.AppNewForm;
-import com.baidu.disconf.web.service.app.service.AppMgr;
-import com.baidu.disconf.web.service.app.vo.AppListVo;
-import com.baidu.disconf.web.service.user.service.UserInnerMgr;
-import com.baidu.disconf.web.service.user.service.UserMgr;
-import com.baidu.dsp.common.constant.DataFormatConstants;
-import com.github.knightliao.apollo.utils.time.DateUtils;
+import java.util.*;
 
 /**
  * @author liaoqiqi
@@ -33,38 +25,22 @@ public class AppMgrImpl implements AppMgr {
     @Autowired
     private AppDao appDao;
 
-    @Autowired
-    private UserInnerMgr userInnerMgr;
-
-    @Autowired
-    private UserMgr userMgr;
-
-    /**
-     *
-     */
     @Override
     public App getByName(String name) {
-
         return appDao.getByName(name);
     }
 
-    /**
-     *
-     */
     @Override
-    public List<AppListVo> getAuthAppVoList() {
-
-        List<App> apps = appDao.getByIds(userInnerMgr.getVisitorAppIds());
-
-        List<AppListVo> appListVos = new ArrayList<AppListVo>();
+    public List<AppVO> getAppVoList() {
+        List<App> apps = appDao.findAll();
+        List<AppVO> appVOS = new ArrayList<AppVO>();
         for (App app : apps) {
-            AppListVo appListVo = new AppListVo();
-            appListVo.setId(app.getId());
-            appListVo.setName(app.getName());
-            appListVos.add(appListVo);
+            AppVO appVO = new AppVO();
+            appVO.setId(app.getId());
+            appVO.setName(app.getName());
+            appVOS.add(appVO);
         }
-
-        return appListVos;
+        return appVOS;
     }
 
     @Override
@@ -86,12 +62,11 @@ public class AppMgrImpl implements AppMgr {
 
     @Override
     public App getById(Long id) {
-
         return appDao.get(id);
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+    @Transactional(propagation = Propagation.REQUIRED)
     public App create(AppNewForm appNew) {
 
         // new app
@@ -109,7 +84,7 @@ public class AppMgrImpl implements AppMgr {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+    @Transactional(propagation = Propagation.REQUIRED)
     public void delete(Long appId) {
         appDao.delete(appId);
     }

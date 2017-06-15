@@ -7,7 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.baidu.disconf.core.common.constants.DisConfigTypeEnum;
-import com.baidu.disconf.web.common.Constants;
+import com.baidu.disconf.web.constant.CommonConstants;
 import com.baidu.disconf.web.service.config.bo.Config;
 import com.baidu.disconf.web.service.config.dao.ConfigDao;
 import com.baidu.dsp.common.constant.DataFormatConstants;
@@ -38,7 +38,7 @@ public class ConfigDaoImpl extends AbstractDao<Long, Config> implements ConfigDa
 
         return findOne(new Match(Columns.APP_ID, appId), new Match(Columns.ENV_ID, envId),
                 new Match(Columns.VERSION, version), new Match(Columns.TYPE, disConfigTypeEnum.getType()),
-                new Match(Columns.NAME, key), new Match(Columns.STATUS, Constants.STATUS_NORMAL));
+                new Match(Columns.NAME, key), new Match(Columns.STATUS, CommonConstants.STATUS_NORMAL));
     }
 
     /**
@@ -47,11 +47,11 @@ public class ConfigDaoImpl extends AbstractDao<Long, Config> implements ConfigDa
     @Override
     public List<Config> getConfByAppEnv(Long appId, Long envId) {
         if (envId == null) {
-            return find(new Match(Columns.APP_ID, appId), new Match(Columns.STATUS, Constants.STATUS_NORMAL));
+            return find(new Match(Columns.APP_ID, appId), new Match(Columns.STATUS, CommonConstants.STATUS_NORMAL));
         } else {
 
             return find(new Match(Columns.APP_ID, appId), new Match(Columns.ENV_ID, envId),
-                    new Match(Columns.STATUS, Constants.STATUS_NORMAL));
+                    new Match(Columns.STATUS, CommonConstants.STATUS_NORMAL));
 
         }
     }
@@ -71,7 +71,7 @@ public class ConfigDaoImpl extends AbstractDao<Long, Config> implements ConfigDa
 
         matchs.add(new Match(Columns.VERSION, version));
 
-        matchs.add(new Match(Columns.STATUS, Constants.STATUS_NORMAL));
+        matchs.add(new Match(Columns.STATUS, CommonConstants.STATUS_NORMAL));
 
         return page2(matchs, daoPage);
     }
@@ -86,7 +86,7 @@ public class ConfigDaoImpl extends AbstractDao<Long, Config> implements ConfigDa
         matchs.add(new Match(Columns.APP_ID, appId));
         matchs.add(new Match(Columns.ENV_ID, envId));
         matchs.add(new Match(Columns.VERSION, version));
-        matchs.add(new Match(Columns.STATUS, Constants.STATUS_NORMAL));
+        matchs.add(new Match(Columns.STATUS, CommonConstants.STATUS_NORMAL));
         if (hasValue) {
             return find(matchs, new ArrayList<Order>());
         } else {
@@ -102,7 +102,7 @@ public class ConfigDaoImpl extends AbstractDao<Long, Config> implements ConfigDa
     public void deleteItem(Long configId) {
         String curTime = DateUtils.format(new Date(), DataFormatConstants.COMMON_TIME_FORMAT);
         List<Modify> modifyList = new ArrayList<Modify>();
-        modifyList.add(modify(Columns.STATUS, Constants.STATUS_DELETE));
+        modifyList.add(modify(Columns.STATUS, CommonConstants.STATUS_DELETE));
         modifyList.add(modify(Columns.UPDATE_TIME, curTime));
 
         update(modifyList, match(Columns.CONFIG_ID, configId));

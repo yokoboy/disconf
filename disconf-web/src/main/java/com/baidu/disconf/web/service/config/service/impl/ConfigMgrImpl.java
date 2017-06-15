@@ -1,9 +1,11 @@
 package com.baidu.disconf.web.service.config.service.impl;
 
 import com.baidu.disconf.core.common.constants.DisConfigTypeEnum;
-import com.baidu.disconf.web.common.Constants;
-import com.baidu.disconf.web.config.ApplicationPropertyConfig;
-import com.baidu.disconf.web.innerapi.zookeeper.ZooKeeperDriver;
+import com.baidu.disconf.web.constant.CommonConstants;
+import com.baidu.disconf.web.config.ApplicationPropertyConfigVO;
+import com.baidu.disconf.web.service.env.model.EnvBO;
+import com.baidu.disconf.web.service.env.service.impl.EnvMgrImpl;
+import com.baidu.disconf.web.service.zookeeper.service.ZooKeeperDriver;
 import com.baidu.disconf.web.service.app.bo.App;
 import com.baidu.disconf.web.service.app.service.AppMgr;
 import com.baidu.disconf.web.service.config.bo.Config;
@@ -14,8 +16,6 @@ import com.baidu.disconf.web.service.config.service.ConfigHistoryMgr;
 import com.baidu.disconf.web.service.config.service.ConfigMgr;
 import com.baidu.disconf.web.service.config.vo.ConfListVo;
 import com.baidu.disconf.web.service.config.vo.MachineListVo;
-import com.baidu.disconf.web.service.env.bo.Env;
-import com.baidu.disconf.web.service.env.service.EnvMgr;
 import com.baidu.disconf.web.service.zookeeper.dto.ZkDisconfData;
 import com.baidu.disconf.web.service.zookeeper.dto.ZkDisconfData.ZkDisconfDataItem;
 import com.baidu.disconf.web.service.zookeeper.service.ZkDeployMgr;
@@ -58,7 +58,7 @@ public class ConfigMgrImpl implements ConfigMgr {
     private AppMgr appMgr;
 
     @Autowired
-    private EnvMgr envMgr;
+    private EnvMgrImpl envMgr;
 
     @Autowired
     private ZooKeeperDriver zooKeeperDriver;
@@ -70,7 +70,7 @@ public class ConfigMgrImpl implements ConfigMgr {
     private LogMailBean logMailBean;
 
     @Autowired
-    private ApplicationPropertyConfig applicationPropertyConfig;
+    private ApplicationPropertyConfigVO applicationPropertyConfig;
 
     @Autowired
     private ConfigHistoryMgr configHistoryMgr;
@@ -145,7 +145,7 @@ public class ConfigMgrImpl implements ConfigMgr {
         //
         //
         final App app = appMgr.getById(confListForm.getAppId());
-        final Env env = envMgr.getById(confListForm.getEnvId());
+        final EnvBO envBO = envMgr.getById(confListForm.getEnvId());
 
         //
         //
@@ -153,7 +153,7 @@ public class ConfigMgrImpl implements ConfigMgr {
         final boolean myFetchZk = fetchZk;
         Map<String, ZkDisconfData> zkDataMap = new HashMap<String, ZkDisconfData>();
         if (myFetchZk) {
-            zkDataMap = zkDeployMgr.getZkDisconfDataMap(app.getName(), env.getName(), confListForm.getVersion());
+            zkDataMap = zkDeployMgr.getZkDisconfDataMap(app.getName(), envBO.getName(), confListForm.getVersion());
         }
         final Map<String, ZkDisconfData> myzkDataMap = zkDataMap;
 
@@ -167,7 +167,7 @@ public class ConfigMgrImpl implements ConfigMgr {
                     public ConfListVo transfer(Config input) {
 
                         String appNameString = app.getName();
-                        String envName = env.getName();
+                        String envName = envBO.getName();
 
                         ZkDisconfData zkDisconfData = null;
                         if (myzkDataMap != null && myzkDataMap.keySet().contains(input.getName())) {
@@ -201,9 +201,9 @@ public class ConfigMgrImpl implements ConfigMgr {
         Config config = configDao.get(configId);
 
         App app = appMgr.getById(config.getAppId());
-        Env env = envMgr.getById(config.getEnvId());
+        EnvBO envBO = envMgr.getById(config.getEnvId());
 
-        return convert(config, app.getName(), env.getName(), null);
+        return convert(config, app.getName(), envBO.getName(), null);
     }
 
     /**
@@ -215,7 +215,7 @@ public class ConfigMgrImpl implements ConfigMgr {
         Config config = configDao.get(configId);
 
         App app = appMgr.getById(config.getAppId());
-        Env env = envMgr.getById(config.getEnvId());
+        EnvBO envBO = envMgr.getById(config.getEnvId());
 
         //
         //
@@ -226,7 +226,7 @@ public class ConfigMgrImpl implements ConfigMgr {
             disConfigTypeEnum = DisConfigTypeEnum.ITEM;
         }
 
-        ZkDisconfData zkDisconfData = zkDeployMgr.getZkDisconfData(app.getName(), env.getName(), config.getVersion(),
+        ZkDisconfData zkDisconfData = zkDeployMgr.getZkDisconfData(app.getName(), envBO.getName(), config.getVersion(),
                 disConfigTypeEnum, config.getName());
 
         if (zkDisconfData == null) {
@@ -324,7 +324,7 @@ public class ConfigMgrImpl implements ConfigMgr {
         config.setType(disConfigTypeEnum.getType());
         config.setVersion(confNewForm.getVersion());
         config.setValue(CodeUtils.utf8ToUnicode(confNewForm.getValue()));
-        config.setStatus(Constants.STATUS_NORMAL);
+        config.setStatus(CommonConstants.STATUS_NORMAL);
 
         // 时间
         String curTime = DateUtils.format(new Date(), DataFormatConstants.COMMON_TIME_FORMAT);

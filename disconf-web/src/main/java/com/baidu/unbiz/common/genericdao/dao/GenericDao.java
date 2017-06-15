@@ -598,12 +598,10 @@ public abstract class GenericDao<KEY extends Serializable, ENTITY extends BaseOb
     }
 
     public boolean update(ENTITY entity) {
-
         if (entity == null) {
             recordLog(" param entity is null!");
             return false;
         }
-
         Query query = queryGenerator.getUpdateQuery(entity);
         return executeSQL(query.getSql(), query.getParams()) == 1;
     }

@@ -1,82 +1,64 @@
 package com.baidu.disconf.web.service.env.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.baidu.disconf.web.service.env.dao.EnvDao;
+import com.baidu.disconf.web.service.env.model.EnvBO;
+import com.baidu.disconf.web.service.env.model.EnvVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.baidu.disconf.web.service.env.bo.Env;
-import com.baidu.disconf.web.service.env.dao.EnvDao;
-import com.baidu.disconf.web.service.env.service.EnvMgr;
-import com.baidu.disconf.web.service.env.vo.EnvListVo;
+import java.util.*;
 
 /**
  * @author liaoqiqi
  * @version 2014-6-16
  */
 @Service
-public class EnvMgrImpl implements EnvMgr {
+public class EnvMgrImpl {
 
     @Autowired
     private EnvDao envDao;
 
-    @Override
-    public Env getByName(String name) {
+    public EnvBO getByName(String name) {
 
         return envDao.getByName(name);
     }
 
-    /**
-     *
-     */
-    @Override
-    public List<EnvListVo> getVoList() {
-
-        List<Env> envs = envDao.findAll();
-
-        List<EnvListVo> envListVos = new ArrayList<EnvListVo>();
-        for (Env env : envs) {
-            EnvListVo envListVo = new EnvListVo();
-            envListVo.setId(env.getId());
-            envListVo.setName(env.getName());
-
-            envListVos.add(envListVo);
+    public List<EnvVO> getVoList() {
+        List<EnvBO> envBOS = envDao.findAll();
+        List<EnvVO> envVOS = new ArrayList<EnvVO>();
+        for (EnvBO envBO : envBOS) {
+            EnvVO envVO = new EnvVO();
+            envVO.setId(envBO.getId());
+            envVO.setName(envBO.getName());
+            envVOS.add(envVO);
         }
-
-        return envListVos;
+        return envVOS;
     }
 
-    @Override
-    public Map<Long, Env> getByIds(Set<Long> ids) {
+    public Map<Long, EnvBO> getByIds(Set<Long> ids) {
 
         if (ids.size() == 0) {
-            return new HashMap<Long, Env>();
+            return new HashMap<Long, EnvBO>();
         }
 
-        List<Env> envs = envDao.get(ids);
+        List<EnvBO> envBOS = envDao.get(ids);
 
-        Map<Long, Env> map = new HashMap<Long, Env>();
-        for (Env env : envs) {
-            map.put(env.getId(), env);
+        Map<Long, EnvBO> map = new HashMap<Long, EnvBO>();
+        for (EnvBO envBO : envBOS) {
+            map.put(envBO.getId(), envBO);
         }
 
         return map;
     }
 
-    @Override
-    public Env getById(Long id) {
+    public EnvBO getById(Long id) {
         return envDao.get(id);
     }
 
     /**
      *
      */
-    @Override
-    public List<Env> getList() {
+    public List<EnvBO> getList() {
         return envDao.findAll();
     }
 

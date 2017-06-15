@@ -3,12 +3,12 @@ package com.baidu.disconf.web.tools;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.baidu.disconf.web.service.user.model.UserBO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.baidu.disconf.web.service.role.bo.RoleEnum;
-import com.baidu.disconf.web.service.sign.utils.SignUtils;
-import com.baidu.disconf.web.service.user.bo.User;
+import com.baidu.disconf.web.service.user.util.SignUtils;
 import com.baidu.disconf.web.service.user.dao.UserDao;
 import com.github.knightliao.apollo.utils.common.RandomUtil;
 
@@ -26,27 +26,27 @@ public class UserCreateCommon {
     public static void generateCreateSpecifyUserSQL(UserDao userDao, String userName, String password,
                                                     RoleEnum roleEnum, String ownAppIds) {
 
-        User user = new User();
+        UserBO userBO = new UserBO();
 
-        user.setName(userName);
+        userBO.setName(userName);
 
-        user.setPassword(SignUtils.createPassword(password));
+        userBO.setPassword(SignUtils.createPassword(password));
         // token
-        user.setToken(SignUtils.createToken(userName));
+        userBO.setToken(SignUtils.createToken(userName));
 
         // set appids
-        user.setOwnApps(ownAppIds);
+//        userBO.setOwnApps(ownAppIds);
 
         // role
-        user.setRoleId(roleEnum.getValue());
+//        userBO.setRoleId(roleEnum.getValue());
 
         System.out.println("/* " + userName + "\t" + password + "*/");
-        // userDao.create(user);
+        // userDao.create(userBO);
 
-        List<User> userList = new ArrayList<User>();
-        userList.add(user);
+        List<UserBO> userBOList = new ArrayList<UserBO>();
+        userBOList.add(userBO);
 
-        printUserList(userList);
+        printUserList(userBOList);
     }
 
     private static String getUserName(Long i) {
@@ -63,54 +63,51 @@ public class UserCreateCommon {
 
         int num = 5;
 
-        List<User> userList = new ArrayList<User>();
+        List<UserBO> userBOList = new ArrayList<UserBO>();
         for (Long i = 1L; i < num + 1; ++i) {
 
-            User user = new User();
+            UserBO userBO = new UserBO();
 
-            user.setId(i);
+            userBO.setId(i);
 
-            user.setName(getUserName(i));
+            userBO.setName(getUserName(i));
 
-            user.setOwnApps("2");
-
-            user.setRoleId(RoleEnum.NORMAL.getValue());
+//            userBO.setOwnApps("2");
+//
+//            userBO.setRoleId(RoleEnum.NORMAL.getValue());
 
             int random = RandomUtil.random(0, 10000);
             String password = "MhxzKhl" + String.valueOf(random);
-            user.setPassword(SignUtils.createPassword(password));
+            userBO.setPassword(SignUtils.createPassword(password));
             // token
-            user.setToken(SignUtils.createToken(user.getName()));
+            userBO.setToken(SignUtils.createToken(userBO.getName()));
 
-            System.out.println("/* userid" + user.getId() + "\t" + password + "*/");
-            // userDao.create(user);
-            userList.add(user);
+            System.out.println("/* userid" + userBO.getId() + "\t" + password + "*/");
+            // userDao.create(userBO);
+            userBOList.add(userBO);
         }
 
-        printUserList(userList);
+        printUserList(userBOList);
     }
 
     /**
-     * @param userList
+     * @param userBOList
      */
-    private static void printUserList(List<User> userList) {
+    private static void printUserList(List<UserBO> userBOList) {
 
-        //
-        //
-        //
+        for (UserBO userBO : userBOList) {
 
-        for (User user : userList) {
-
-            if (user.getId() != null) {
-                System.out.format("DELETE FROM `user` where user_id=%d;\n", user.getId());
+            if (userBO.getId() != null) {
+                System.out.format("DELETE FROM `userBO` where user_id=%d;\n", userBO.getId());
             }
             System.out
-                    .format("INSERT INTO `user` (`user_id`, `name`, `password`, `token`, `ownapps`,`role_id`) VALUES "
+                    .format("INSERT INTO `userBO` (`user_id`, `name`, `password`, `token`, `ownapps`,`role_id`) VALUES "
                                     + "(%d,"
                                     +
                                     " '%s', " +
-                                    "'%s', '%s','%s', '%d');\n", user.getId(), user.getName(), user.getPassword(),
-                            user.getToken(), user.getOwnApps(), user.getRoleId());
+                                    "'%s', '%s','%s', '%d');\n", userBO.getId(), userBO.getName(), userBO.getPassword(),
+//                            userBO.getToken(), userBO.getOwnApps(), userBO.getRoleId());
+                            userBO.getToken(), null, null);
         }
         System.out.println("\n");
     }

@@ -1,17 +1,16 @@
 package com.baidu.disconf.web.service.config.service.impl;
 
-import java.util.Date;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.baidu.disconf.web.service.config.bo.ConfigHistory;
 import com.baidu.disconf.web.service.config.dao.ConfigHistoryDao;
 import com.baidu.disconf.web.service.config.service.ConfigHistoryMgr;
-import com.baidu.disconf.web.service.user.dto.Visitor;
+import com.baidu.disconf.web.service.user.model.VisitorDTO;
 import com.baidu.dsp.common.constant.DataFormatConstants;
 import com.baidu.ub.common.commons.ThreadContext;
 import com.github.knightliao.apollo.utils.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 /**
  * Created by knightliao on 15/12/25.
@@ -31,9 +30,9 @@ public class ConfigHistoryMgrImpl implements ConfigHistoryMgr {
         configHistory.setOldValue(oldValue);
         configHistory.setNewValue(newValue);
 
-        Visitor visitor = ThreadContext.getSessionVisitor();
-        if (visitor != null) {
-            configHistory.setUpdateBy(visitor.getLoginUserId());
+        VisitorDTO visitorDTO = ThreadContext.getSessionVisitor();
+        if (visitorDTO != null) {
+            configHistory.setUpdateBy(visitorDTO.getId());
         }
 
         String curTime = DateUtils.format(new Date(), DataFormatConstants.COMMON_TIME_FORMAT);

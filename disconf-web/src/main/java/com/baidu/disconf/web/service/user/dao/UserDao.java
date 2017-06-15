@@ -1,16 +1,16 @@
 package com.baidu.disconf.web.service.user.dao;
 
-import com.baidu.disconf.web.service.user.bo.User;
+import com.baidu.disconf.web.service.user.model.UserBO;
 import com.baidu.unbiz.common.genericdao.dao.BaseDao;
 
 /**
  * @author liaoqiqi
  * @version 2013-11-28
  */
-public interface UserDao extends BaseDao<Long, User> {
+public interface UserDao extends BaseDao<Long, UserBO> {
 
     void executeSql(String sql);
 
-    User getUserByName(String name);
+    UserBO getUserByName(String name);
 
 }
