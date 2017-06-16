@@ -44,17 +44,6 @@
                             </a>
                         </li>
                         &nbsp;&nbsp;&nbsp;&nbsp;
-                        <li style="display:inline;" class="dropdown">
-                            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
-                                <span class="zu-top-nav-link">新建<b class="caret"></b></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="/newapp.html">新建APP</a></li>
-                                <li><a href="/newconfig_item.html">新建配置项</a></li>
-                                <li><a href="/newconfig_file.html">新建配置文件</a></li>
-                            </ul>
-                        </li>
-                        &nbsp;&nbsp;&nbsp;&nbsp;
                         <li style="display:inline;">
                             <a href="/modifypassword.html">
                                 <span class="zu-top-nav-link">修改密码</span>
@@ -105,10 +94,23 @@
 
                         <form id="form" action="/config/" method="post" class="private-form clearfix">
                             <h2 class="autoPush-detail-title">修改权限</h2>
+
                             <h4 id="cur-role" data-id=""></h4>
 
                             <div id="authInfo" class="ztree">
 
+                            </div>
+                            <hr>
+                            <div id="def-opt" style="display: none;">
+                                默认操作权限:
+                                <br>
+                                <label>查看：<input name="defOpt" type="checkbox" value="1" checked="checked" disabled="disabled"> &nbsp;&nbsp;</label>&nbsp;
+                                <label>修改：<input name="defOpt" type="checkbox" value="2">&nbsp;&nbsp;</label>&nbsp;
+                                <label> 下载：<input name="defOpt" type="checkbox" value="3">&nbsp;&nbsp;</label>&nbsp;
+                                <label> 批量下载：<input name="defOpt" type="checkbox" value="4">&nbsp;&nbsp;</label>&nbsp;
+                                <label> 删除：<input name="defOpt" type="checkbox" value="5">&nbsp;&nbsp;</label>&nbsp;
+                                <label> 查看ZK：<input name="defOpt" type="checkbox" value="6"></label>
+                                <a onclick="batchOpt()" class="btn">点击修改(会取消勾选未选中的权限)</a>
                             </div>
 
                         </form>
@@ -177,6 +179,31 @@
         });
     }
 
+    function batchOpt() {
+
+        var notCheckd = new Array();
+
+
+        $("#def-opt").find("input").each(function (index, node) {
+            if (!$(node).is(':checked')) {
+                notCheckd.push($(node).val())
+            }
+        })
+
+        console.log(notCheckd);
+        var nodes = authInfo.transformToArray(authInfo.getNodes());
+        console.log(nodes);
+        for (var index in nodes) {
+            var node = nodes[index];
+            var id = node.id;
+            if (!node.isParent && id.indexOf("0") != 0) {
+                var lastId = id.substring(id.lastIndexOf("-") + 1, id.length);
+                authInfo.checkNode(node, notCheckd.indexOf(lastId) < 0, true);
+            }
+
+        }
+    }
+
 
     $(function () {
         getSession();
@@ -195,6 +222,7 @@
             $("#roleSidebar").html(liHtml)
 
             $(".roleItem").on("click", function () {
+                $("#def-opt").show();
                 var dataId = $(this).attr("data-id");
                 roleItemClassClick(dataId)
                 var name = $(this).text();
