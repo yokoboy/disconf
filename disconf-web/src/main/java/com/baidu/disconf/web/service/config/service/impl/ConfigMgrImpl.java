@@ -103,9 +103,8 @@ public class ConfigMgrImpl implements ConfigMgr {
      */
     public List<File> getDisconfFileList(ConfListForm confListForm) {
 
-        List<Config> configList =
-                configDao.getConfigList(confListForm.getAppId(), confListForm.getEnvId(), confListForm.getVersion(),
-                        true);
+//        List<Config> configList = configDao.getConfigList(confListForm.getAppId(), confListForm.getEnvId(), confListForm.getVersion(), true);
+        List<Config> configList = configDao.getConfByAppEnv(confListForm.getAppId(), confListForm.getEnvId());
 
         // 时间作为当前文件夹
         String curTime = DateUtils.format(new Date(), DataFormatConstants.COMMON_TIME_FORMAT);

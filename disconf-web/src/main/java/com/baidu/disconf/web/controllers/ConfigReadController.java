@@ -149,7 +149,13 @@ public class ConfigReadController extends BaseController {
      */
     @Auth(optId = AuthMngConstant.DOWNLOAD_BATCH)
     @RequestMapping(value = "/downloadfilebatch", method = RequestMethod.GET)
-    public HttpEntity<byte[]> download2(@RequestParam("env_app") String envApp, @Valid ConfListForm confListForm) {
+    public HttpEntity<byte[]> download2(@RequestParam("env_app") String envApp) {
+        String[] env_app = envApp.split("-");
+        ConfListForm confListForm = new ConfListForm();
+        confListForm.setAppId(Long.valueOf(env_app[1]));
+        confListForm.setVersion(env_app[1]);
+        confListForm.setEnvId(Long.valueOf(env_app[0]));
+
 
         LOG.info(confListForm.toString());
 
@@ -161,9 +167,7 @@ public class ConfigReadController extends BaseController {
         //
         // prefix
         //
-        String prefixString =
-                "APP" + confListForm.getAppId() + "_" + "ENV" + confListForm.getEnvId() + "_" + "VERSION" +
-                        confListForm.getVersion();
+        String prefixString = "APP" + confListForm.getAppId() + "_" + "ENV" + confListForm.getEnvId() + "_" + "VERSION" + confListForm.getVersion();
 
         HttpHeaders header = new HttpHeaders();
 
