@@ -75,28 +75,28 @@
     <beans profile="db-test">
         <import resource="classpath*:applicationContext-dbconfig-test.xml"/>
         <bean id="loginRedisLogin" class="com.baidu.disconf.web.service.user.service.RedisLoginImpl"/>
-        <bean id="roleResourceAspect" class="com.baidu.disconf.web.service.user.aop.RoleResourceAspectMock"/>
+        <bean id="roleResourceAspect" class="com.baidu.disconf.web.service.user.aop.AuthAspect"/>
         <bean id="zookeeperDriver" class="com.baidu.disconf.web.service.zookeeper.service.impl.ZookeeperDriverMock"/>
     </beans>
 
     <beans profile="db-normal">
         <import resource="classpath*:myconfig/applicationContext-dbconfig.xml"/>
         <bean id="loginRedisLogin" class="com.baidu.disconf.web.service.user.service.RedisLoginImpl"/>
-        <bean id="roleResourceAspect" class="com.baidu.disconf.web.service.user.aop.RoleResourceAspect"/>
+        <bean id="roleResourceAspect" class="com.baidu.disconf.web.service.user.aop.AuthAspect"/>
         <bean id="zookeeperDriver" class="com.baidu.disconf.web.service.zookeeper.service.impl.ZookeeperDriverImpl"/>
     </beans>
 
     <beans profile="production">
         <import resource="classpath*:myconfig/applicationContext-dbconfig.xml"/>
         <bean id="loginRedisLogin" class="com.baidu.disconf.web.service.user.service.RedisLoginImpl"/>
-        <bean id="roleResourceAspect" class="com.baidu.disconf.web.service.user.aop.RoleResourceAspect"/>
+        <bean id="roleResourceAspect" class="com.baidu.disconf.web.service.user.aop.AuthAspect"/>
         <bean id="zookeeperDriver" class="com.baidu.disconf.web.service.zookeeper.service.impl.ZookeeperDriverImpl"/>
     </beans>
 
     <beans profile="rd">
         <import resource="classpath*:myconfig/applicationContext-dbconfig.xml"/>
         <bean id="loginRedisLogin" class="com.baidu.disconf.web.service.user.service.RedisLoginImpl"/>
-        <bean id="roleResourceAspect" class="com.baidu.disconf.web.service.user.aop.RoleResourceAspectMock"/>
+        <bean id="roleResourceAspect" class="com.baidu.disconf.web.service.user.aop.AuthAspect"/>
         <bean id="zookeeperDriver" class="com.baidu.disconf.web.service.zookeeper.service.impl.ZookeeperDriverMock"/>
     </beans>
 

@@ -2,13 +2,13 @@ package com.baidu.disconf.web.controllers;
 
 import com.baidu.disconf.core.common.constants.DisConfigTypeEnum;
 import com.baidu.disconf.core.common.json.ValueVo;
+import com.baidu.disconf.web.controllers.validator.ConfigValidator;
+import com.baidu.disconf.web.controllers.validator.ConfigValidator4Fetch;
+import com.baidu.disconf.web.model.ConfigFullModel;
 import com.baidu.disconf.web.service.config.bo.Config;
 import com.baidu.disconf.web.service.config.form.ConfForm;
 import com.baidu.disconf.web.service.config.service.ConfigFetchMgr;
 import com.baidu.disconf.web.service.config.utils.ConfigUtils;
-import com.baidu.disconf.web.model.ConfigFullModel;
-import com.baidu.disconf.web.controllers.validator.ConfigValidator;
-import com.baidu.disconf.web.controllers.validator.ConfigValidator4Fetch;
 import com.baidu.dsp.common.annotation.NoAuth;
 import com.baidu.dsp.common.constant.WebConstants;
 import com.baidu.dsp.common.controller.BaseController;
@@ -51,9 +51,6 @@ public class ConfigFetcherController extends BaseController {
 
     /**
      * 获取指定app env version 的配置项列表
-     *
-     * @param confForm
-     * @return
      */
     @NoAuth
     @RequestMapping(value = "/list", method = RequestMethod.GET)
@@ -71,9 +68,6 @@ public class ConfigFetcherController extends BaseController {
 
     /**
      * 获取配置项 Item
-     *
-     * @param confForm
-     * @return
      */
     @NoAuth
     @RequestMapping(value = "/item", method = RequestMethod.GET)
@@ -93,14 +87,11 @@ public class ConfigFetcherController extends BaseController {
             return ConfigUtils.getErrorVo(e.getMessage());
         }
 
-        return configFetchMgr.getConfItemByParameter(configModel.getApp().getId(), configModel.getEnvBO().getId(),
-                configModel.getVersion(), configModel.getKey());
+        return configFetchMgr.getConfItemByParameter(configModel.getApp().getId(), configModel.getEnvBO().getId(), configModel.getVersion(), configModel.getKey());
     }
 
     /**
      * 获取配置文件
-     *
-     * @return
      */
     @NoAuth
     @RequestMapping(value = "/file", method = RequestMethod.GET)
@@ -123,10 +114,7 @@ public class ConfigFetcherController extends BaseController {
         if (hasError == false) {
             try {
                 //
-                Config config = configFetchMgr
-                        .getConfByParameter(configModel.getApp().getId(), configModel.getEnvBO().getId(),
-                                configModel.getVersion(), configModel.getKey(),
-                                DisConfigTypeEnum.FILE);
+                Config config = configFetchMgr.getConfByParameter(configModel.getApp().getId(), configModel.getEnvBO().getId(), configModel.getVersion(), configModel.getKey(), DisConfigTypeEnum.FILE);
                 if (config == null) {
                     hasError = true;
                     throw new DocumentNotFoundException(configModel.getKey());
@@ -148,9 +136,6 @@ public class ConfigFetcherController extends BaseController {
 
     /**
      * 下载
-     *
-     * @param fileName
-     * @return
      */
     public HttpEntity<byte[]> downloadDspBill(String fileName, String value) {
 

@@ -1,4 +1,5 @@
 var mainTpl; // 表格模版
+var env_app; // 表格模版
 var api = {
     can_opt: "/api/auth_mng/env_app_opt?env_app=",
     // 批量下载
@@ -26,6 +27,7 @@ var authInfo;
 
     function zTreeOnClick(event, treeId, treeNode) {
         if (!treeNode.isParent) {
+            env_app = treeNode.id;
             main(treeNode.id);
 
             removeCantOpt(treeNode.id);
@@ -110,7 +112,7 @@ var authInfo;
                 var html = "";
                 var result = data.result;
                 $.each(result, function (index, item) {
-                    html += renderItem(item, index);
+                    html += renderItem(env_app, item, index);
                 });
                 if (html != "") {
                     $("#mainlist").show();
@@ -132,16 +134,16 @@ var authInfo;
             removeCantOpt(env_app)
         });
         // 渲染主列表
-        function renderItem(item, i) {
+        function renderItem(env_app, item, i) {
 
             var link = "";
             del_link = '<a id="itemDel' + item.configId + '" class="opt_5" style="cursor: pointer; cursor: hand; " ><i title="删除" class="icon-remove"></i></a>';
             if (item.type == "配置文件") {
-                link = '<a target="_blank" class="opt_2" href="modifyFile.html?configId=' + item.configId + '"><i title="修改" class="icon-edit"></i></a>';
+                link = '<a target="_blank" class="opt_2" href="modifyFile.html?configId=' + item.configId + '&env_app=' + env_app + '"><i title="修改" class="icon-edit"></i></a>';
             } else {
-                link = '<a target="_blank" class="opt_2" href="modifyItem.html?configId=' + item.configId + '"><i title="修改" class="icon-edit"></i></a>';
+                link = '<a target="_blank" class="opt_2" href="modifyItem.html?configId=' + item.configId + '&env_app=' + env_app + '"><i title="修改" class="icon-edit"></i></a>';
             }
-            var downloadlink = '<a href="/api/web/config/download/' + +item.configId + '" class="opt_3"><i title="下载" class="icon-download-alt"></i></a>';
+            var downloadlink = '<a href="/api/web/config/download/' + +item.configId + '?env_app=' + env_app + '" class="opt_3"><i title="下载" class="icon-download-alt"></i></a>';
 
             var type = '<i title="配置项" class="icon-leaf"></i>';
             if (item.type == "配置文件") {
@@ -218,7 +220,7 @@ var authInfo;
         //
         $.ajax({
             type: "GET",
-            url: "/api/web/config/" + configId
+            url: "/api/web/config/" + configId + "?env_app=" + env_app
         }).done(
             function (data) {
                 if (data.success === "true") {
@@ -242,7 +244,7 @@ var authInfo;
         //
         $.ajax({
             type: "GET",
-            url: "/api/web/config/zk/" + configId
+            url: "/api/web/config/zk/" + configId + "?env_app=" + env_app
         }).done(
             function (data) {
                 if (data.success === "true") {
@@ -296,10 +298,10 @@ var authInfo;
 
         $.ajax({
             type: "DELETE",
-            url: "/api/web/config/" + id
+            url: "/api/web/config/" + id + "?env_app=" + env_app
         }).done(function (data) {
             if (data.success === "true") {
-                main();
+                main(env_app);
             }
         });
     }
@@ -326,8 +328,7 @@ var authInfo;
             return;
         }
 
-        var base_url = "/api/zoo/zkdeploy?appId=" + appId + "&envId=" + envId
-            + "&version=" + version
+        var base_url = "/api/zoo/zkdeploy?appId=" + appId + "&envId=" + envId + "&version=" + version + "&env_app=" + env_app
 
         $.ajax({
             type: "GET",

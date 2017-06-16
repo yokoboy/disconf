@@ -9,7 +9,7 @@ import com.github.knightliao.apollo.db.bo.BaseObject;
  * Created by Kail on 2017/6/15.
  */
 @Table(db = DB.DB_NAME, name = "auth")
-public class Auth extends BaseObject<Integer> {
+public class AuthBO extends BaseObject<Integer> {
 
     private static final long serialVersionUID = 1L;
 

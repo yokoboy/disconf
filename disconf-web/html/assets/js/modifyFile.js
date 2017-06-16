@@ -1,6 +1,7 @@
 getSession();
 
 var configId = Util.param.getConfigId();
+var env_app = Util.param.getUrlVars()['env_app'];
 
 fetchFileData();
 
@@ -13,20 +14,19 @@ function fetchFileData() {
     //
     $.ajax({
         type: "GET",
-        url: "/api/web/config/" + configId
+        url: "/api/web/config/" + configId + "?env_app=" + env_app
     }).done(
         function (data) {
             if (data.success === "true") {
                 var result = data.result;
-                $("#app").text(
-                        result.appName + ' (appid=' + result.appId + ')');
+                $("#app").text(result.appName + ' (appid=' + result.appId + ')');
                 $("#version").text(result.version);
                 $("#env").text(result.envName);
                 $("#key").text(result.key);
                 $("#oldvalue").text(result.value);
                 $("#currentData").text(
-                        result.appName + " * " + result.version + " * "
-                        + result.envName);
+                    result.appName + " * " + result.version + " * "
+                    + result.envName);
                 // 获取APP下的配置数据
                 fetchItems(result.appId, result.envId, result.version,
                     configId);
@@ -101,7 +101,7 @@ $('#myfilerar').change(function (evt) {
 // 提交
 var options = {
 
-    url: '/api/web/config/file/' + configId,
+    url: '/api/web/config/file/' + configId + "?env_app=" + env_app,
     beforeSubmit: validate,
     beforeSend: function (xhr) {
 
@@ -225,7 +225,7 @@ $("#uploadChoice").on('click', 'li a', function () {
 
             $.ajax({
                 type: "PUT",
-                url: "/api/web/config/filetext/" + configId,
+                url: "/api/web/config/filetext/" + configId + "?env_app=" + env_app,
                 data: {
                     "fileContent": fileContent
                 }

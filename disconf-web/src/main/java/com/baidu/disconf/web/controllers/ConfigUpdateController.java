@@ -1,25 +1,21 @@
 package com.baidu.disconf.web.controllers;
 
-import javax.validation.constraints.NotNull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.baidu.disconf.web.service.config.service.ConfigMgr;
+import com.baidu.disconf.web.constant.AuthMngConstant;
 import com.baidu.disconf.web.controllers.validator.ConfigValidator;
 import com.baidu.disconf.web.controllers.validator.FileUploadValidator;
+import com.baidu.disconf.web.service.config.service.ConfigMgr;
+import com.baidu.disconf.web.service.user.aop.Auth;
 import com.baidu.dsp.common.constant.WebConstants;
 import com.baidu.dsp.common.controller.BaseController;
 import com.baidu.dsp.common.exception.FileUploadException;
 import com.baidu.dsp.common.vo.JsonObjectBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * 专用于配置更新、删除
@@ -27,7 +23,7 @@ import com.baidu.dsp.common.vo.JsonObjectBase;
  * @author liaoqiqi
  * @version 2014-6-24
  */
-@Controller
+@RestController
 @RequestMapping(WebConstants.API_PREFIX + "/web/config")
 public class ConfigUpdateController extends BaseController {
 
@@ -44,15 +40,10 @@ public class ConfigUpdateController extends BaseController {
 
     /**
      * 配置项的更新
-     *
-     * @param configId
-     * @param value
-     *
-     * @return
      */
+    @Auth(optId = AuthMngConstant.WRITE)
     @RequestMapping(value = "/item/{configId}", method = RequestMethod.PUT)
-    @ResponseBody
-    public JsonObjectBase updateItem(@PathVariable long configId, String value) {
+    public JsonObjectBase updateItem(@RequestParam("env_app") String envApp, @PathVariable long configId, String value) {
 
         // 业务校验
         configValidator.validateUpdateItem(configId, value);
@@ -75,15 +66,10 @@ public class ConfigUpdateController extends BaseController {
 
     /**
      * 配置文件的更新
-     *
-     * @param configId
-     * @param file
-     *
-     * @return
      */
-    @ResponseBody
+    @Auth(optId = AuthMngConstant.WRITE)
     @RequestMapping(value = "/file/{configId}", method = RequestMethod.POST)
-    public JsonObjectBase updateFile(@PathVariable long configId, @RequestParam("myfilerar") MultipartFile file) {
+    public JsonObjectBase updateFile(@RequestParam("env_app") String envApp, @PathVariable long configId, @RequestParam("myfilerar") MultipartFile file) {
 
         //
         // 校验
@@ -100,7 +86,6 @@ public class ConfigUpdateController extends BaseController {
         //
         String emailNotification = "";
         try {
-
             String str = new String(file.getBytes(), "UTF-8");
             LOG.info("receive file: " + str);
 
@@ -123,26 +108,17 @@ public class ConfigUpdateController extends BaseController {
 
     /**
      * 配置文件的更新(文本修改)
-     *
-     * @param configId
-     * @param fileContent
-     *
-     * @return
      */
-    @ResponseBody
+    @Auth(optId = AuthMngConstant.WRITE)
     @RequestMapping(value = "/filetext/{configId}", method = RequestMethod.PUT)
-    public JsonObjectBase updateFileWithText(@PathVariable long configId, @NotNull String fileContent) {
+    public JsonObjectBase updateFileWithText(@RequestParam("env_app") String envApp, @PathVariable long configId, @NotNull String fileContent) {
 
         //
         // 更新
         //
         String emailNotification = "";
         try {
-
-            String str = new String(fileContent.getBytes(), "UTF-8");
-            LOG.info("receive file: " + str);
-
-            emailNotification = configMgr.updateItemValue(configId, str);
+            emailNotification = configMgr.updateItemValue(configId, fileContent);
             LOG.info("update " + configId + " ok");
 
         } catch (Exception e) {
@@ -160,12 +136,10 @@ public class ConfigUpdateController extends BaseController {
 
     /**
      * delete
-     *
-     * @return
      */
+    @Auth(optId = AuthMngConstant.DELETE)
     @RequestMapping(value = "/{configId}", method = RequestMethod.DELETE)
-    @ResponseBody
-    public JsonObjectBase delete(@PathVariable long configId) {
+    public JsonObjectBase delete(@RequestParam("env_app") String envApp, @PathVariable long configId) {
 
         configValidator.validateDelete(configId);
 

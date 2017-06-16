@@ -1,11 +1,13 @@
 package com.baidu.disconf.web.controllers;
 
 import com.baidu.disconf.core.common.constants.DisConfigTypeEnum;
+import com.baidu.disconf.web.constant.AuthMngConstant;
+import com.baidu.disconf.web.controllers.validator.ConfigValidator;
+import com.baidu.disconf.web.controllers.validator.FileUploadValidator;
 import com.baidu.disconf.web.service.config.form.ConfNewForm;
 import com.baidu.disconf.web.service.config.form.ConfNewItemForm;
 import com.baidu.disconf.web.service.config.service.ConfigMgr;
-import com.baidu.disconf.web.controllers.validator.ConfigValidator;
-import com.baidu.disconf.web.controllers.validator.FileUploadValidator;
+import com.baidu.disconf.web.service.user.aop.Auth;
 import com.baidu.dsp.common.constant.WebConstants;
 import com.baidu.dsp.common.context.impl.ContextReaderImpl;
 import com.baidu.dsp.common.controller.BaseController;
@@ -16,11 +18,10 @@ import com.baidu.dsp.common.vo.JsonObjectBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
@@ -32,7 +33,7 @@ import javax.validation.constraints.NotNull;
  * @author liaoqiqi
  * @version 2014-6-24
  */
-@Controller
+@RestController
 @RequestMapping(WebConstants.API_PREFIX + "/web/config")
 public class ConfigNewController extends BaseController {
 
@@ -49,12 +50,9 @@ public class ConfigNewController extends BaseController {
 
     /**
      * 配置项的新建
-     *
-     * @param confNewForm
-     * @return
      */
+    @Auth(AuthMngConstant.CHANGE_CONFIG_ITEM)
     @RequestMapping(value = "/item", method = RequestMethod.POST)
-    @ResponseBody
     public JsonObjectBase newItem(@Valid ConfNewItemForm confNewForm) {
 
         // 业务校验
@@ -69,7 +67,7 @@ public class ConfigNewController extends BaseController {
     /**
      * 配置文件的新建(使用上传配置文件)
      */
-    @ResponseBody
+    @Auth(AuthMngConstant.CHANGE_CONFIG_FILE)
     @RequestMapping(value = "/file", method = RequestMethod.POST)
     public JsonObjectBase updateFile(@Valid ConfNewForm confNewForm, @RequestParam("myfilerar") MultipartFile[] files) {
 
@@ -121,16 +119,10 @@ public class ConfigNewController extends BaseController {
 
     /**
      * 配置文件的新建(使用文本)
-     *
-     * @param confNewForm
-     * @param fileContent
-     * @param fileName
-     * @return
      */
-    @ResponseBody
+    @Auth(AuthMngConstant.CHANGE_CONFIG_FILE)
     @RequestMapping(value = "/filetext", method = RequestMethod.POST)
-    public JsonObjectBase updateFileWithText(@Valid ConfNewForm confNewForm, @NotNull String fileContent,
-                                             @NotNull String fileName) {
+    public JsonObjectBase updateFileWithText(@Valid ConfNewForm confNewForm, @NotNull String fileContent, @NotNull String fileName) {
 
         LOG.info(confNewForm.toString());
 

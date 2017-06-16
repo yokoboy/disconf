@@ -1,11 +1,13 @@
 package com.baidu.disconf.web.controllers;
 
+import com.baidu.disconf.web.constant.AuthMngConstant;
 import com.baidu.disconf.web.controllers.validator.ConfigValidator;
 import com.baidu.disconf.web.service.config.form.ConfListForm;
 import com.baidu.disconf.web.service.config.form.VersionListForm;
 import com.baidu.disconf.web.service.config.service.impl.ConfigMgrImpl;
 import com.baidu.disconf.web.service.config.vo.ConfListVo;
 import com.baidu.disconf.web.service.config.vo.MachineListVo;
+import com.baidu.disconf.web.service.user.aop.Auth;
 import com.baidu.disconf.web.utils.MyStringUtils;
 import com.baidu.disconf.web.utils.TarUtils;
 import com.baidu.dsp.common.constant.WebConstants;
@@ -48,8 +50,9 @@ public class ConfigReadController extends BaseController {
     /**
      * 获取列表,有分页的
      */
+    @Auth(optId = AuthMngConstant.READ)
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public JsonObjectBase getConfigList(@RequestParam("env_app") String envApp) {
+    public JsonObjectBase getConfigList(@Auth @RequestParam("env_app") String envApp) {
         List<ConfListVo> confListVos = configMgr.selectConfigList(envApp, true, false);
         return buildSuccess(confListVos);
     }
@@ -57,6 +60,7 @@ public class ConfigReadController extends BaseController {
     /**
      * 获取列表,有分页的, 没有ZK信息
      */
+    @Auth(optId = AuthMngConstant.READ)
     @RequestMapping(value = "/simple/list", method = RequestMethod.GET)
     public JsonObjectBase getSimpleConfigList(@RequestParam("env_app") String envApp) {
         List<ConfListVo> confListVos = configMgr.selectConfigList(envApp, false, false);
@@ -66,8 +70,6 @@ public class ConfigReadController extends BaseController {
 
     /**
      * 获取版本的List
-     *
-     * @return
      */
     @RequestMapping(value = "/versionlist", method = RequestMethod.GET)
     public JsonObjectBase getVersionList(@Valid VersionListForm versionListForm) {
@@ -80,9 +82,9 @@ public class ConfigReadController extends BaseController {
     /**
      * 获取某个
      */
+    @Auth(optId = AuthMngConstant.READ)
     @RequestMapping(value = "/{configId}", method = RequestMethod.GET)
-    @ResponseBody
-    public JsonObjectBase getConfig(@PathVariable long configId) {
+    public JsonObjectBase getConfig(@RequestParam("env_app") String envApp, @PathVariable long configId) {
 
         // 业务校验
         configValidator.valideConfigExist(configId);
@@ -98,13 +100,10 @@ public class ConfigReadController extends BaseController {
 
     /**
      * 获取 zk
-     *
-     * @param configId
-     * @return
      */
+    @Auth(optId = AuthMngConstant.ZK)
     @RequestMapping(value = "/zk/{configId}", method = RequestMethod.GET)
-    @ResponseBody
-    public JsonObjectBase getZkInfo(@PathVariable long configId) {
+    public JsonObjectBase getZkInfo(@RequestParam("env_app") String envApp, @PathVariable long configId) {
 
         // 业务校验
         configValidator.valideConfigExist(configId);
@@ -116,12 +115,10 @@ public class ConfigReadController extends BaseController {
 
     /**
      * 下载
-     *
-     * @param configId
-     * @return
      */
+    @Auth(optId = AuthMngConstant.DOWNLOAD)
     @RequestMapping(value = "/download/{configId}", method = RequestMethod.GET)
-    public HttpEntity<byte[]> downloadDspBill(@PathVariable long configId) {
+    public HttpEntity<byte[]> downloadDspBill(@RequestParam("env_app") String envApp, @PathVariable long configId) {
 
         // 业务校验
         configValidator.valideConfigExist(configId);
@@ -149,12 +146,10 @@ public class ConfigReadController extends BaseController {
 
     /**
      * 批量下载配置文件
-     *
-     * @param confListForm
-     * @return
      */
+    @Auth(optId = AuthMngConstant.DOWNLOAD_BATCH)
     @RequestMapping(value = "/downloadfilebatch", method = RequestMethod.GET)
-    public HttpEntity<byte[]> download2(@Valid ConfListForm confListForm) {
+    public HttpEntity<byte[]> download2(@RequestParam("env_app") String envApp, @Valid ConfListForm confListForm) {
 
         LOG.info(confListForm.toString());
 

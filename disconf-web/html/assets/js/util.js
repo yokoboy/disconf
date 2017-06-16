@@ -71,7 +71,7 @@ Util.date.format = function (source, pattern) {
     }
 
     var pad = Util.number.pad, year = source.getFullYear(), month = source
-        .getMonth() + 1, date2 = source.getDate(), hours = source
+            .getMonth() + 1, date2 = source.getDate(), hours = source
         .getHours(), minutes = source.getMinutes(), seconds = source
         .getSeconds();
 
@@ -113,8 +113,8 @@ Util.date.dateFormat = function (dateNum, opt_formatType) {
 
     Util.lang.isDate = function (source) {
         return '[object Date]' == Object.prototype.toString.call(
-            /** @type {Object} */
-            (source));
+                /** @type {Object} */
+                (source));
     };
 /**
  * 把20110102235959 14位数字转为DATE对象
@@ -174,8 +174,8 @@ Util.date.dateToNumber = function (date) {
  */
 Util.lang.isPlainObject = function (source) {
     return '[object Object]' == Object.prototype.toString.call(
-        /** @type {Object} */
-        (source));
+            /** @type {Object} */
+            (source));
 };
 
 /**
@@ -427,6 +427,17 @@ Util.param.getActivityId = function () {
     var ids = /activityId=(\d+)&?/.exec(location.search);
     var id = ids ? ids[1] : '';
     return id;
+};
+
+Util.param.getUrlVars = function () {
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for (var i = 0; i < hashes.length; i++) {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars;
 };
 
 /*

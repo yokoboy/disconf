@@ -1,3 +1,4 @@
+var env_app = Util.param.getUrlVars()['env_app'];
 //
 // 获取指定配置下的配置数据
 //
@@ -10,6 +11,7 @@ function fetchItems(appId, envId, version, curConfigId) {
     url += "appId=" + appId + "&";
     url += "envId=" + envId + "&";
     url += "version=" + version + "&";
+    url += "env_app=" + env_app;
 
     $.ajax({
         type: "GET",
@@ -17,7 +19,7 @@ function fetchItems(appId, envId, version, curConfigId) {
     }).done(function (data) {
         if (data.success === "true") {
             var html = '<li style="margin-bottom:10px">配置文件/配置项列表</li>';
-            var result = data.page.result;
+            var result = data.result;
             $.each(result, function (index, item) {
                 html += renderItem(item);
             });
@@ -27,14 +29,13 @@ function fetchItems(appId, envId, version, curConfigId) {
     var mainTpl = $("#tItemTpl").html();
     // 渲染主列表
     function renderItem(item) {
-
         var link = "";
         var key = "";
         if (item.type == "配置文件") {
-            link = 'modifyFile.html?configId=' + item.configId;
+            link = 'modifyFile.html?configId=' + item.configId + "&env_app=" + env_app;
             key = '<i title="配置文件" class="icon-file"></i>' + item.key;
         } else {
-            link = 'modifyItem.html?configId=' + item.configId;
+            link = 'modifyItem.html?configId=' + item.configId + "&env_app=" + env_app;
             key = '<i title="配置项" class="icon-leaf"></i>' + item.key;
         }
 

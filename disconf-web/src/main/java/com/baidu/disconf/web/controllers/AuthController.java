@@ -6,9 +6,10 @@ import com.baidu.disconf.web.service.app.service.impl.AppMgrImpl;
 import com.baidu.disconf.web.service.app.vo.AppVO;
 import com.baidu.disconf.web.service.env.model.EnvVO;
 import com.baidu.disconf.web.service.env.service.impl.EnvMgrImpl;
-import com.baidu.disconf.web.service.role.bo.Auth;
+import com.baidu.disconf.web.service.role.bo.AuthBO;
 import com.baidu.disconf.web.service.role.dao.impl.AuthDaoImpl;
 import com.baidu.disconf.web.service.role.service.impl.RoleMgrImpl;
+import com.baidu.disconf.web.service.user.aop.Auth;
 import com.baidu.disconf.web.service.user.model.VisitorDTO;
 import com.baidu.disconf.web.service.user.service.AuthService;
 import com.baidu.disconf.web.service.user.service.UserService;
@@ -127,6 +128,7 @@ public class AuthController extends BaseController {
     /**
      * 获取所有权限
      */
+    @Auth(AuthMngConstant.AUTH_MNG)
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public JsonObjectBase authList() {
         List<EnvVO> envVO = envMgr.getVoList(); // 环境
@@ -155,7 +157,7 @@ public class AuthController extends BaseController {
         }});
 
         data.add(new HashMap<String, Object>() {{
-            put("id", AuthMngConstant.CHANGE_CONFIG_ITEM);
+            put("id", AuthMngConstant.CHANGE_CONFIG_FILE);
             put("name", "新建配置文件");
             put("pId", "0");
         }});
@@ -194,6 +196,7 @@ public class AuthController extends BaseController {
     /**
      * 获取所有角色
      */
+    @Auth(AuthMngConstant.AUTH_MNG)
     @RequestMapping(value = "/role/list", method = RequestMethod.GET)
     public JsonObjectBase roleList() {
         // TODO 判断该用户是否可以修改角色  return buildGlobalError("syserror.inner", ErrorCode.GLOBAL_ERROR);
@@ -205,6 +208,7 @@ public class AuthController extends BaseController {
     /**
      * 获取角色权限
      */
+    @Auth(AuthMngConstant.AUTH_MNG)
     @RequestMapping(value = "/role/{roleId}", method = RequestMethod.GET)
     public JsonObjectBase role(@PathVariable("roleId") Integer roleId) {
         if (roleId == null) {
@@ -217,6 +221,7 @@ public class AuthController extends BaseController {
     /**
      * 保存角色权限
      */
+    @Auth(AuthMngConstant.AUTH_MNG)
     @RequestMapping(value = "/role/{roleId}", method = RequestMethod.POST)
     public JsonObjectBase role(@PathVariable("roleId") Integer roleId, String auth) {
 
@@ -229,14 +234,14 @@ public class AuthController extends BaseController {
         if (StringUtils.isNotBlank(auth)) {
             String[] split = auth.split(CommonConstants.AUTH_SPLIT);
 
-            List<Auth> authList = new ArrayList<Auth>();
+            List<AuthBO> authBOList = new ArrayList<AuthBO>();
             for (String authIds : split) {
-                Auth authVO = new Auth();
-                authVO.setRoleId(roleId);
-                authVO.setAuthInfo(authIds);
-                authList.add(authVO);
+                AuthBO authBOVO = new AuthBO();
+                authBOVO.setRoleId(roleId);
+                authBOVO.setAuthInfo(authIds);
+                authBOList.add(authBOVO);
             }
-            authDao.insert(authList);
+            authDao.insert(authBOList);
         }
         return buildSuccess("ok");
 

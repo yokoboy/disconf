@@ -1,9 +1,11 @@
 package com.baidu.disconf.web.controllers;
 
+import com.baidu.disconf.web.constant.AuthMngConstant;
 import com.baidu.disconf.web.controllers.validator.AppValidator;
 import com.baidu.disconf.web.service.app.form.AppNewForm;
 import com.baidu.disconf.web.service.app.service.AppMgr;
 import com.baidu.disconf.web.service.app.vo.AppVO;
+import com.baidu.disconf.web.service.user.aop.Auth;
 import com.baidu.dsp.common.constant.WebConstants;
 import com.baidu.dsp.common.controller.BaseController;
 import com.baidu.dsp.common.vo.JsonObjectBase;
@@ -38,6 +40,7 @@ public class AppController extends BaseController {
         return buildListSuccess(appVOS, appVOS.size());
     }
 
+    @Auth(AuthMngConstant.CHANGE_APP)
     @RequestMapping(value = "", method = RequestMethod.POST)
     public JsonObjectBase create(@Valid AppNewForm appNewForm) {
         LOG.info(appNewForm.toString());
