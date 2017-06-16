@@ -47,6 +47,25 @@ public class AuthController extends BaseController {
     private UserService userService;
 
     /**
+     * 公共权限
+     */
+    @RequestMapping(value = "/header", method = RequestMethod.GET)
+    public JsonObjectBase headerAuth() {
+        VisitorDTO curVisitor = userService.getCurVisitor();
+        if (null != curVisitor) {
+            Set<String> optId = new HashSet<String>();
+            List<String> auths = curVisitor.getAuths();
+            for (String auth : auths) {
+                if (auth.startsWith("0-")) {
+                    optId.add(auth);
+                }
+            }
+            return buildSuccess("opt", optId);
+        }
+        return buildSuccess("opt", new HashMap());
+    }
+
+    /**
      * 获取左侧菜单
      */
     @RequestMapping(value = "/env_app_opt", method = RequestMethod.GET)
@@ -109,7 +128,7 @@ public class AuthController extends BaseController {
      * 获取所有权限
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public JsonObjectBase authList()    {
+    public JsonObjectBase authList() {
         List<EnvVO> envVO = envMgr.getVoList(); // 环境
         List<AppVO> authAppVoList = appMgr.getAppVoList(); // APP
 

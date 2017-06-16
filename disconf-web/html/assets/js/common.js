@@ -11,7 +11,7 @@ function headShowInit() {
         $(".login-no").hide();
         $(".login-yes").show();
         $("#username").show();
-        $("#username").html(VISITOR.name);
+        $("#username").html(VISITOR.loginUserName);
     } else {
         $(".login-no").show();
         $(".login-yes").hide();
@@ -26,7 +26,7 @@ function loginActions() {
     if (VISITOR.id) {
         $("#brand_url").attr("href", "/main.html");
     } else {
-        $("#brand_url").attr("href", "/");
+        $("#brand_url").attr("href", "/login.html");
     }
 }
 
@@ -48,6 +48,15 @@ function getSession() {
     }).fail(function (xmlHttpRequest, textStatus) {
         window.location.href = "/login.html";
     });
+
+    $.getJSON("/api/auth_mng/header", function (data) {
+        if (data.success == "true") {
+            var opts = data.result.opt;
+            for (var index in opts) {
+                $(".opt_" + opts[index]).show();
+            }
+        }
+    })
 }
 
 // 获取是否登录并且进行跳转
@@ -58,7 +67,6 @@ function getSession2Redirect() {
     }).done(function (data) {
         if (data.success === "true") {
             window.location.href = "/main.html";
-        } else {
         }
     });
     loginActions();
