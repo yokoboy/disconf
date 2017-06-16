@@ -1,6 +1,7 @@
 package com.ttpai.disconf.shell;
 
 import com.ttpai.disconf.shell.service.ConfigService;
+import com.ttpai.disconf.shell.util.CodeUtils;
 import com.ttpai.disconf.shell.util.R;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -89,7 +90,8 @@ public class DisconfShellApp implements CommandLineRunner {
             Path path = Paths.get(targetPath, entry.getKey());
             R.Sout.println("mv -> " + path);
 
-            Files.write(path, entry.getValue().getBytes(Charset.forName("utf-8")));
+            Files.write(path, CodeUtils.unicodeToUtf8(entry.getValue()).getBytes(Charset.forName("utf-8")));
+//            Files.write(path, entry.getValue().getBytes(Charset.forName("utf-8")));
         }
     }
 

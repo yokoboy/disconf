@@ -91,10 +91,6 @@ public class ConfigReadController extends BaseController {
 
         ConfListVo config = configMgr.getConfVo(configId);
 
-        if (null != config && config.getKey().endsWith(".properties")) {
-            config.setValue(MyStringUtils.clearPassword(config.getValue()));
-        }
-
         return buildSuccess(config);
     }
 
